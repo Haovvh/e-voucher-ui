@@ -25,7 +25,7 @@ import VoucherService from '../../services/voucher.service'
 
 
 
-export default function NewVoucher() {
+export default function LoadPromotion(props) {
   const [show, setShow] = useState(false);
   const [voucherID, setVoucherID] = useState(0);
   const [title, setTitle] = useState("");
@@ -33,7 +33,14 @@ export default function NewVoucher() {
   const [value, setValue] = useState("");
   const [vouchers, setVouchers] = useState([])
 
-    
+  const onFinish = (values) => {
+    console.log("Success:", values);
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+  
   const columns = [
     {
       title: "STT",
@@ -113,60 +120,28 @@ for (let i = 1; i <= 100; i++) {
     
   });
 }
-  
-  
 
-  const handleChangeTitle = (event) => (
-    setTitle(event.target.value)
-  )
-  const handleChangeDescription = (event) => (
-    setDescription(event.target.value)
-  )
-  const handleChangeValue = (event) => (
-    setValue(event.target.value)
-  )
-  
-  
-  const handleClose = () => {
-    setShow(false)
-    clearInputWhenSubmit();
-  }
-  const clearInputWhenSubmit = () => {
-    setVoucherID(0);
-    setDescription("");
-    setTitle("");
-    setValue("");
-  }
 
-  const handleSaveVoucher = () => {
-    alert(` ${voucherID} ${title} ${description}  ${value}`)
-    VoucherService.postVoucher({
-      title, description, value
-    })
-    setShow(false)
-    clearInputWhenSubmit();
-    
-  }
-  const handleShow = () => {
-    setShow(true);
-  }
 
   const onChange = (e) => alert(`radio checked:${e.target.value}`);
 
   useEffect(()=>{   
     setVouchers(fetchVoucher);
   },[])
+  if(props && props.show) {
+    return (
+        <>
+        </>
+    )
+  }
 
   return (
     <>
     <div> 
-    <Button variant="primary" onClick={handleShow}>
-              Add Voucher
-            </Button>
       <Card
               bordered={false}
               className="criclebox tablespace mb-24"
-              title="Voucher Table"
+              title="All Promotion"
               extra={
                 <>
                 
@@ -190,43 +165,6 @@ for (let i = 1; i <= 100; i++) {
               </div>
         </Card>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>New Voucher</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>  
-        
-        <label>Title</label>
-        <Input 
-          placeholder="Title" 
-          value={title}
-          onChange = {(event) =>{handleChangeTitle(event)}}
-        /> 
-        <label>Description</label>
-          <Input 
-            placeholder="Description" 
-            value={description}
-            onChange = {(event) =>{handleChangeDescription(event)}}
-          /> 
-          <label>Value</label>
-          <Input 
-            placeholder="Value" 
-            value={value}
-            onChange = {(event) =>{handleChangeValue(event)}}
-            />        
-            
-          
-
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleSaveVoucher}>
-            Save 
-          </Button>
-        </Modal.Footer>
-      </Modal>
       </div>
          
     </>

@@ -1,9 +1,9 @@
 import axios from "axios";
-import authHeader from "./header.service";
+import {authHeader} from './header.service'
 const getAllCustomer = () => (
      axios.get(`${process.env.REACT_APP_API_URL}/customer`,
     { 
-        headers: authHeader() 
+        headers: authHeader()
     })
 );
 

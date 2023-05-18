@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const Login = (email, password, role) => (
-   axios.post(`${process.env.REACT_APP_API_URL}/EndUser/Login`, {
+   axios.post(`${process.env.REACT_APP_API_URL}/user/signin`, {
         email,
         password,
         role
@@ -11,14 +11,14 @@ const Logout = () => (
   localStorage.removeItem("user")  
 );
 
-const Signup = (email, address, phone, password) => (
-  axios.post(`${process.env.REACT_APP_API_URL}/user/post-user`, {
-    email, address, phone, password
+const Signup = (email, address, phoneNumber, password, name) => (
+  axios.post(`${process.env.REACT_APP_API_URL}/user/signup`, {
+    email, address, phoneNumber, password, name
   })
 );
 
 const GetUser = () => (
-   JSON.parse(localStorage.getItem('user'))
+   JSON.parse(localStorage.getItem('isuser'))
 );
 
 export default  {

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Layout,
@@ -22,7 +22,8 @@ const { Header, Footer, Content } = Layout;
 
 export default function SignUp () {
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -41,8 +42,11 @@ export default function SignUp () {
     const handleChangeAddress = (event) =>{
       setAddress(event.target.value);
     }
-    const handleChangePhone = (event) =>{
-      setPhone(event.target.value);
+    const handleChangePhoneNumber = (event) =>{
+      setPhoneNumber(event.target.value);
+    }
+    const handleChangeName = (event) =>{
+      setName(event.target.value);
     }
     const handleChangePassword = (event) =>{
       setPassword(event.target.value);
@@ -50,21 +54,46 @@ export default function SignUp () {
     const handleChangeConfirmPassword = (event) =>{
       setConfirmPassword(event.target.value);
     }
+    const clearInput = () => {
+      setAddress("");
+      setConfirmPassword("");
+      setEmail("");
+      setName("");
+      setPassword("");
+      setPhoneNumber("");
+    }
 
   
   const handleOnClick = () =>{
-    if(password && confirmPassword && password !== confirmPassword) {
-      if(email && password && address && phone){
-        alert(`${email} ${password} ${phone} ${address}`)
-        Service.Signup(email, address, phone, password).then(
+    if(password && confirmPassword && password === confirmPassword) {
+      if(email && password && address && phoneNumber){
+        
+        Service.Signup(email, address, phoneNumber, password, name).then(
           response =>{
-            console.log(response)
+            if(response.data.success) {
+              
+              alert(`SignUp Email:${email} Success. Please Login`)  
+              window.location.assign('/signin')
+              clearInput();            
+            }
+          } , error => {
+            
+            if(error.response && !error.response.data.success  ) {
+              alert(error.response.data.message)
+            }
           }
         )
       }
+    } 
+    else {
+      
+      alert("Password and Confirm Password are not the same")
     }
         
   }
+  useEffect ( () => {
+    localStorage.clear();
+  }, [])
 
   return (
     <React.Fragment>
@@ -109,19 +138,37 @@ export default function SignUp () {
 
                 <Form.Item
                   className="username"
-                  label="Phone"
-                  name="phone"
+                  label="Name"
+                  name="name"
                   rules={[
                     {
                       required: true,
-                      message: "Please input your Phone!",
+                      message: "Please input your name!",
                     },
                   ]}
                 >
                   <Input 
-                  placeholder="Phone" 
-                  value={phone}
-                  onChange = {(event) =>{handleChangePhone(event)}}
+                  placeholder="Name" 
+                  value={name}
+                  onChange = {(event) =>{handleChangeName(event)}}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  className="username"
+                  label="phoneNumber"
+                  name="phoneNumber"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your phoneNumber!",
+                    },
+                  ]}
+                >
+                  <Input 
+                  placeholder="phoneNumber" 
+                  value={phoneNumber}
+                  onChange = {(event) =>{handleChangePhoneNumber(event)}}
                   />
                 </Form.Item>
                 <Form.Item

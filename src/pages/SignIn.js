@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
 import {
@@ -25,7 +25,7 @@ const { Header, Footer, Content } = Layout;
 export default function SignIn () {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const roleUser = ["Customer", "Partner", "Ddmin"];
+  const roleUser = ["customer", "partner", "admin"];
   const [role, setRole] = useState("");
 
     const onFinish = (values) => {
@@ -43,20 +43,29 @@ export default function SignIn () {
     }
 
   const handleChangeRole = (value) =>{
-    console.log(value)
     setRole(value);
   }
   const handleOnClick = () =>{
     
     if(email && password && role){
-      alert(`${email} ${password} ${role}`)
       Service.Login(email, password, role).then(
         response =>{
-          console.log(response)
+          if( response.data && response.data.success ) {
+            localStorage.setItem("isuser", JSON.stringify(response.data));
+            alert("SignIn Success")
+            window.location.assign('/')
+          } 
+        }, error => {
+          if(error.response && error.response.data && error.response.status === 401 && !error.response.data.success) {
+            alert(error.response.data.message)
+          }
         }
       )
     }    
   }
+  useEffect ( () => {
+    localStorage.clear();
+  }, [])
 
   return (
     <React.Fragment>
