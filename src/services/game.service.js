@@ -1,7 +1,7 @@
 import axios from "axios";
 import authHeader from "./header.service";
 const getAllGame = () => (
-     axios.get(`${process.env.REACT_APP_API_URL}/game`,
+     axios.get(`${process.env.REACT_APP_API_URL}/partner/game`,
     { 
         headers: authHeader() 
     })
@@ -21,7 +21,7 @@ const postGame = () => (
         headers: authHeader() 
     })
 );
-const putGame = () =>(
+const putGame = (gameId) =>(
     axios.put(`${process.env.REACT_APP_API_URL}/game`,{
         gameId
     },

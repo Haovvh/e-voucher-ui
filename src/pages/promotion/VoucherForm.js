@@ -37,7 +37,7 @@ export default function VoucherForm() {
   useEffect(()=>{
     setVouchers(fetchVoucher)
     
-  })
+  },[])
 
   return (
     <>

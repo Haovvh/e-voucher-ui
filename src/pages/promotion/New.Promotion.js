@@ -28,69 +28,50 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import VoucherService from '../../services/voucher.service'
-
+import promotionService from '../../services/promotion.service';
+import gameService from '../../services/game.service';
 
 
 export default function NewPromotion(props) {
-    
+
     const [showVoucher, setShowVoucher] = useState(false);
+    const [voucherData, setVoucherData] = useState([])
     const [voucher, setVoucher] = useState({
       key: 0,
-      voucherID: 0,
+      id: 0,
       title: "Vui lòng chọn voucher",
       description: "",
       value: ""
     });
     
+    const [games, setGames] = useState([]);
+    const [gameID, setGameID] = useState(0)
     
     const [quantity, setQuantity] = useState(0)
     
-    const [promotion, setPromotion] = useState([{
+    const [promotion, setPromotion] = useState({
       title:"",
       description:"",
       start: "",
       end: ""
-    }])
-    
-
-
-    const [voucherInPromotion, setVoucherInPromotion] = useState([])
-
-    
-    const fetchVoucher = [];
-
-    for (let i = 1; i <= 10; i++) {
-      fetchVoucher.push({
-        
-        voucherID: i,
-        title: `Voucher ${i} %`,
-        description: `Voucher mua hàng giảm giá ${i} %`,
-        value: Number(`${i}2`),
-        
-      });
-    }
-
-    fetchVoucher.unshift({
-      voucherID: 0,
-      title: "Vui lòng chọn loại voucher",
-      description: "      ",
-      value: 0
     })
-    const loadVouchers = fetchVoucher.map((item, key) => ({...item, key}))
+    const [promotionID, setPromotionID] = useState(0);
+
+
+    const [vouchers, setVouchers] = useState([])
     
-    const option = loadVouchers.map((item) => {
+    const option = voucherData.map((item) => {
       return (
-        <option key={item.voucherID} value={item.voucherID}>
+        <option key={item.id} value={item.id}>
           {item.title}
         </option>
       )
     })
     
-    const columns = [    
+    const columns = [
       {
         title: "TITLE",
-        dataIndex: "title",        
-        width: "32%",
+        dataIndex: "title",      
       },
       {
         title: "DESCRIPTION",
@@ -129,13 +110,13 @@ export default function NewPromotion(props) {
 
     const onDeleteVoucher = (record) => {
       
-      const id = record.voucherID
+      const id = record.id
 
       const title = record.title;
       
       if(window.confirm(`Are you sure you want to delete this ${id} ${title}}`)){
-        setVoucherInPromotion((option) =>
-        option.filter((e)=> e.voucherID !== id)
+        setVouchers((option) =>
+        option.filter((e)=> e.id !== id)
         )
       }
       
@@ -147,22 +128,28 @@ export default function NewPromotion(props) {
   
 
     const handleSaveVoucher = () => {   
-      if(voucher.voucherID !== 0 && quantity >0 && voucher.description && voucher.value)  {
-        setShowVoucher(false)    
-        setVoucherInPromotion([...voucherInPromotion, {
-          
-          voucherID: voucher.voucherID,
-          title: voucher.title,
-          description: voucher.description,
-          value: voucher.value,
-          quantity: quantity
-        }])
-        setQuantity(0)
-        setVoucher({
-          voucherID:0,
-          description: "",
-          title: ""
-        })
+      if(voucher.id !== 0 && quantity >0 && voucher.description && voucher.value)  {
+        const check = vouchers.filter(option => option.id === voucher.id).length
+        if (check > 0) {
+          alert("Voucher đã tồn tại trong promotion")
+        } else {
+          setShowVoucher(false)    
+          setVouchers([...vouchers, {
+            
+            id: voucher.id,
+            title: voucher.title,
+            description: voucher.description,
+            value: voucher.value,
+            quantity: quantity
+          }])
+          setQuantity(0)
+          setVoucher({
+            id:0,
+            description: "",
+            title: ""
+          })
+        }        
+        
       } else {
         alert("Vui lòng chọn voucher và số lượng")
       }
@@ -196,22 +183,133 @@ export default function NewPromotion(props) {
       }))
     )
 
+    const handleChangeGame = (event) =>{
+      console.log(event.target.value)
+      setGameID(event.target.value)
+    }
+
     const handleChangeVoucher = (event) => {
       const id = parseInt(event.target.value)
-      const temp = loadVouchers.filter((option) => (
-        option.voucherID === id
+      const temp = voucherData.filter((option) => (
+        option.id === id
       ))[0]  
       
       setVoucher(temp)
             
     }
     const handleClickSavePromotion = () =>{
-      alert("OK")
+      if(vouchers.length>1 && promotion.title && promotion.description && promotion.start && promotion.end && gameID !== 0) {
+        if(promotionID === 0) {
+          promotionService.postPromotion(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, gameID).then(
+            response=> {
+              if(response.data && response.data.success) {
+                alert("Success")
+                window.location.assign('/promotion')
+                console.log(response.data)
+              }
+              
+            }, error => {
+              console.log(error)
+            }
+          )
+        } else {
+          promotionService.putPromotion(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, promotionID, gameID).then(
+            response=> {
+              if(response.data && response.data.success) {
+                alert("Success")
+                window.location.assign('/promotion')
+                console.log(response.data)
+              }
+              
+            }, error => {
+              console.log(error)
+            }
+          )
+        }
+      } else {
+        alert("Vui lòng nhập đủ thông tin")
+      }
+      
+      
+      
     }
   useEffect(()=>{   
+    if(props.show) {
+
+      VoucherService.getAllVoucher().then(
+        response => {
+          if(response.data && response.data.success) {
+            
+            const tempVouchers = response.data.data;
+            tempVouchers.unshift({
+              id:0,
+              title: "Vui lòng chọn",
+              description: '', 
+              value: 0
+            })
+            
+            console.log(tempVouchers)
+          setVoucherData(tempVouchers)
+          console.log(response.data.data)
+          }
+        }, error => {
+          console.log(error)
+        }
+      )
+      gameService.getAllGame().then(
+        response => {
+          if(response.data && response.data.success) {
+            console.log(response.data.data)
+            const tempGame = response.data.data;
+            tempGame.unshift({
+              id: 0, 
+              title: 'Vui lòng chọn Game'
+            })
+            setGames(response.data.data)
+          }
+          
+        }, error => {
+          console.log(error)
+        }
+      )
+      if(props.id) {
+        promotionService.getPromotionById(props.id).then(
+          response=>{
+            if(response.data && response.data.success && response.data.data) {
+              console.log(response.data.data)
+              const tempVouchers = [];
+              const tempArray = response.data.data.Details
+              tempArray.map((option) =>{
+                  tempVouchers.push({
+                    key: option.Voucher.id,
+                    id: option.Voucher.id,
+                    title: option.Voucher.title,
+                    description: option.Voucher.description,
+                    value: option.Voucher.value,
+                    quantity: option.quantity
+                  })
+              })
+              
+              setVouchers(tempVouchers);
+              const temp = response.data.data
+              setPromotionID(temp.id)
+              setGameID(temp.Game.id)
+              setPromotion({
+                title: temp.title,
+                description: temp.description,
+                start: temp.start,
+                end: temp.end
+              })
+            }
+            
+          }
+        )
+      }
+    }
     
     
-  },[])
+    
+  },[props.show])
 
   if(props && !props.show) {
     return (
@@ -252,6 +350,9 @@ export default function NewPromotion(props) {
         <Col>
         <label>End</label>
         </Col>
+        <Col>
+        <label>Game</label>
+        </Col>
       </Row>
       <Row>
         <Col>
@@ -285,11 +386,31 @@ export default function NewPromotion(props) {
             onChange = {(event) =>{handleChangeEnd(event)}}          
             />
         </Col>
+        <Col>
+        
+        <Form.Control
+        as="select" 
+        value={gameID}
+        onChange={handleChangeGame}
+        >
+          
+        {games && games.length >0 && games.map(
+          (item) => {
+            return (
+              <option key={item.id} value={item.id}>
+                {item.title}
+              </option>
+            )
+          }
+        )}
+      
+      </Form.Control>
+        </Col>
       </Row>
     </Container>
     
     
-    { voucherInPromotion && voucherInPromotion.length > 0 &&
+    { vouchers && vouchers.length > 0 &&
     <Card
     bordered={false}
     className="criclebox tablespace mb-24"
@@ -298,8 +419,9 @@ export default function NewPromotion(props) {
         
         <Table
         columns={columns}
-            dataSource={voucherInPromotion}
+            dataSource={vouchers}
             pagination={true}
+            rowKey="id"
             bordered
             className="ant-border-space"
         />
@@ -316,7 +438,7 @@ export default function NewPromotion(props) {
         <label>Voucher</label>
         <Form.Control
         as="select" 
-        value={voucher.voucherID}
+        value={voucher.id}
         onChange={handleChangeVoucher}
         >
           

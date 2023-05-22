@@ -1,7 +1,7 @@
 import axios from "axios";
 import authHeader from "./header.service";
 const getAllVoucher = () => (
-     axios.get(`${process.env.REACT_APP_API_URL}/voucher`,
+     axios.get(`${process.env.REACT_APP_API_URL}/partner/voucher`,
     { 
         headers: authHeader() 
     })
