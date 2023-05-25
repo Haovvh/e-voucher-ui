@@ -39,10 +39,12 @@ const deleteGame = (gameId) => (
     
 );
 
-export default {
+const gameService = {
     getAllGame,
     getGameById,
     postGame,
     putGame,
     deleteGame
 }
+
+export default gameService

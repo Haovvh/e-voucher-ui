@@ -8,7 +8,7 @@ const Login = (email, password, role) => (
       })      
 );
 const Logout = () => (
-  localStorage.removeItem("user")  
+  localStorage.removeItem("isuser")  
 );
 
 const Signup = (email, address, phoneNumber, password, name) => (
@@ -21,9 +21,11 @@ const GetUser = () => (
    JSON.parse(localStorage.getItem('isuser'))
 );
 
-export default  {
+const Service = {
   Login, 
   Logout, 
   Signup, 
   GetUser
 }
+
+export default Service

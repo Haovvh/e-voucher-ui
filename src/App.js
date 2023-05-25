@@ -8,7 +8,7 @@ import Game from "./pages/games/Game";
 import Partner from "./pages/partners/Partner";
 import Promotion from "./pages/promotion/Promotion";
 
-import User from "./pages/users/User";
+import Customer from "./pages/customers/Customer";
 import Voucher from "./pages/vouchers/Voucher";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
@@ -25,7 +25,7 @@ function App() {
         <Route  path="/signup" exact component={SignUp} />
         <Route path="/signin" exact component={SignIn} />
         <Main>
-          <Route exact path="/user" component={User} />
+          <Route exact path="/customer" component={Customer} />
           <Route exact path="/game" component={Game} />
           <Route exact path="/promotion" component={Promotion} />
           <Route exact path="/partner" component={Partner} />

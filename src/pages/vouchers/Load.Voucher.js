@@ -39,6 +39,7 @@ export default function NewVoucher() {
       title: "STT",
       dataIndex: "key",        
       width: "5%",
+      
     },
     {
       title: "TITLE",

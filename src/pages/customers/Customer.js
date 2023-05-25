@@ -23,7 +23,7 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import partnerService from "../../services/partner.service";
 
-export default function Partner () {
+export default function Customer () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [partnerId, setPartnerId] = useState("");

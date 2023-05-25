@@ -38,11 +38,12 @@ const deleteVoucher = (VoucherId) => (
     })
     
 );
-
-export default {
+const VoucherService = {
     getAllVoucher,
     getVoucherById,
     postVoucher,
     putVoucher,
     deleteVoucher
 }
+
+export default VoucherService

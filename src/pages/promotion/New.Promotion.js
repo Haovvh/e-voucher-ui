@@ -6,8 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import {
-  
+import { 
   
   Card,
   Radio,
@@ -34,7 +33,7 @@ import gameService from '../../services/game.service';
 
 export default function NewPromotion(props) {
 
-    const [showVoucher, setShowVoucher] = useState(false);
+    const [show, setShow] = useState(false);
     const [voucherData, setVoucherData] = useState([])
     const [voucher, setVoucher] = useState({
       key: 0,
@@ -122,18 +121,18 @@ export default function NewPromotion(props) {
       
     };
     
-    const handleCloseVoucher = () => {
-      setShowVoucher(false)
+    const handleClickClose = () => {
+      setShow(false)
     }
   
 
-    const handleSaveVoucher = () => {   
+    const handleClickSave = () => {   
       if(voucher.id !== 0 && quantity >0 && voucher.description && voucher.value)  {
         const check = vouchers.filter(option => option.id === voucher.id).length
         if (check > 0) {
           alert("Voucher đã tồn tại trong promotion")
         } else {
-          setShowVoucher(false)    
+          setShow(false)    
           setVouchers([...vouchers, {
             
             id: voucher.id,
@@ -154,8 +153,8 @@ export default function NewPromotion(props) {
         alert("Vui lòng chọn voucher và số lượng")
       }
     }
-    const handleShowVoucher = () => {
-      setShowVoucher(true);
+    const handleshow = () => {
+      setShow(true);
     }
     const handleChangeTitle = (event) => (
       setPromotion(prevState =>({
@@ -198,34 +197,39 @@ export default function NewPromotion(props) {
             
     }
     const handleClickSavePromotion = () =>{
-      if(vouchers.length>1 && promotion.title && promotion.description && promotion.start && promotion.end && gameID !== 0) {
-        if(promotionID === 0) {
-          promotionService.postPromotion(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, gameID).then(
-            response=> {
-              if(response.data && response.data.success) {
-                alert("Success")
-                window.location.assign('/promotion')
-                console.log(response.data)
+      if(vouchers.length > 0 && promotion.title && promotion.description && promotion.start && promotion.end && gameID !== 0) {
+        if(promotion.start < promotion.end) {
+          if(promotionID === 0) {
+            promotionService.postPromotion(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, gameID).then(
+              response=> {
+                if(response.data && response.data.success) {
+                  alert("Create Success")
+                  window.location.assign('/promotion')
+                  
+                }
+                
+              }, error => {
+                console.log(error)
               }
-              
-            }, error => {
-              console.log(error)
-            }
-          )
+            )
+          } else {
+            promotionService.putPromotion(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, promotionID, gameID).then(
+              response=> {
+                if(response.data && response.data.success) {
+                  alert("Update Success")
+                  window.location.assign('/promotion')
+                  
+                }
+                
+              }, error => {
+                console.log(error)
+              }
+            )
+          }
         } else {
-          promotionService.putPromotion(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, promotionID, gameID).then(
-            response=> {
-              if(response.data && response.data.success) {
-                alert("Success")
-                window.location.assign('/promotion')
-                console.log(response.data)
-              }
-              
-            }, error => {
-              console.log(error)
-            }
-          )
+          alert("Start < End")
         }
+        
       } else {
         alert("Vui lòng nhập đủ thông tin")
       }
@@ -325,7 +329,7 @@ export default function NewPromotion(props) {
     <Container>
       <Row>
         <Col>
-        <Button className='btn btn-primary' onClick={handleShowVoucher}>
+        <Button className='btn btn-primary' onClick={handleshow}>
           Add Voucher
         </Button>
         </Col>
@@ -430,7 +434,7 @@ export default function NewPromotion(props) {
     }
       
 
-      <Modal show={showVoucher} onHide={handleCloseVoucher}>
+      <Modal show={show} onHide={handleClickClose}>
         <Modal.Header closeButton>
           <Modal.Title>Add Voucher</Modal.Title>
         </Modal.Header>
@@ -467,10 +471,10 @@ export default function NewPromotion(props) {
             />
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseVoucher}>
+          <Button variant="secondary" onClick={handleClickClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSaveVoucher}>
+          <Button variant="primary" onClick={handleClickSave}>
             Save 
           </Button>
         </Modal.Footer>

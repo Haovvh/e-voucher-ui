@@ -36,10 +36,12 @@ export default function Promotion () {
       title: "IdPromotion",
       dataIndex: "id",        
       width: "5%",
+      
     },
     {
       title: "TITLE",
-      dataIndex: "title",        
+      dataIndex: "title",      
+      sorter: (a, b) => a.title - b.title,  
     },
     {
       title: "DESCRIPTION",
@@ -64,6 +66,11 @@ export default function Promotion () {
     {
       title: "Status",
       dataIndex: "Status",
+      render: (text, record) => (
+        <Button onClick={()=> handleEditStatus(record)}>
+          {record.Status}
+        </Button>
+       ),    
       
     },
     {
@@ -74,12 +81,12 @@ export default function Promotion () {
           <>
             <EditOutlined
               onClick={() => {
-                onEditPromotion(record);
+                onEditData(record);
               }}
             />
             <DeleteOutlined
               onClick={() => {
-                onDeletePromotion(record);
+                onDeleteData(record);
               }}
               style={{ color: "red", marginLeft: 12 }}
             />
@@ -90,8 +97,12 @@ export default function Promotion () {
     }
     
   ];
+  
+  const handleEditStatus = (record) => {
+    alert(record.id)
+  } 
 
-  const onDeletePromotion = (record) => {
+  const onDeleteData = (record) => {
     
     const id = record.id
     const title = record.title;
@@ -100,7 +111,7 @@ export default function Promotion () {
       promotionService.deletePromotion(id).then(
         response => {
           if(response.data && response.data.success) {
-            alert("success");
+            alert("Delete success");
             setIsLoad(true);
           }
           
@@ -108,10 +119,11 @@ export default function Promotion () {
           console.log(error)
         }
       )     
-    }
-    
+    }    
   };
-  const onEditPromotion = (record) => { 
+
+  
+  const onEditData = (record) => { 
 
     setPromotionID(record.id)
     setShow(true)
@@ -120,6 +132,7 @@ export default function Promotion () {
     useEffect(()=>{   
       promotionService.getAllPromotion().then(
         response => {
+          console.log(response.data)
           if (response.data && response.data.success) {
             setIsLoad(false)          
             
@@ -155,7 +168,8 @@ export default function Promotion () {
               columns={columns}
               dataSource={promotions}
               pagination={true}
-              rowKey="id"
+              rowKey={(record) => { return record.id}}
+              
               bordered
               className="ant-border-space"
             />
