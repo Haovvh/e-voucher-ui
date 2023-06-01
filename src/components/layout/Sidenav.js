@@ -4,6 +4,8 @@ import { Menu, Button } from "antd";
 import { NavLink, useLocation } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 
+import header from '../../services/header.service'
+
 function Sidenav({ color }) {
   const { pathname } = useLocation();
   const page = pathname.replace("/", "");
@@ -132,6 +134,10 @@ function Sidenav({ color }) {
       />
     </svg>,
   ];
+  const isAdmin = header.email() && header.role() && header.role() === "admin";
+  const isPartner = header.email() && header.role() && header.role() === "partner";
+  const isCustomer = header.email() && header.role() && header.role() === "customer";
+
 
   return (
     <>
@@ -141,13 +147,15 @@ function Sidenav({ color }) {
         <span><h2>E-Voucher Pro</h2></span>
       </div>
       <hr />
+      
       <Menu theme="light" mode="inline">
-        <Menu.Item key="1">
-          <NavLink to="/partner">
+      {isAdmin &&
+        <Menu.Item key="10">
+          <NavLink to="/adminpartner">
             <span
               className="icon"
               style={{
-                background: page === "Partner" ? color : "",
+                background: page === "adminpartner" ? color : "",
               }}
             >
               {tables}
@@ -155,13 +163,14 @@ function Sidenav({ color }) {
             <span className="label">Partner</span>
           </NavLink>
         </Menu.Item>
-
-        <Menu.Item key="2">
-          <NavLink to="/promotion">
+      }
+      { isAdmin &&       
+        <Menu.Item key="11">
+          <NavLink to="/adminpromotion">
             <span
               className="icon"
               style={{
-                background: page === "promotion" ? color : "",
+                background: page === "adminpromotion" ? color : "",
               }}
             >
               {tables}
@@ -169,27 +178,14 @@ function Sidenav({ color }) {
             <span className="label">Promotion</span>
           </NavLink>
         </Menu.Item>
-
-        <Menu.Item key="3">
-          <NavLink to="/voucher">
+      }
+      { isAdmin &&       
+        <Menu.Item key="12">
+          <NavLink to="/admincustomer">
             <span
               className="icon"
               style={{
-                background: page === "voucher" ? color : "",
-              }}
-            >
-              {tables}
-            </span>
-            <span className="label">Voucher</span>
-          </NavLink>
-        </Menu.Item>
-
-        <Menu.Item key="4">
-          <NavLink to="/customer">
-            <span
-              className="icon"
-              style={{
-                background: page === "customer" ? color : "",
+                background: page === "admincustomer" ? color : "",
               }}
             >
               {tables}
@@ -197,13 +193,29 @@ function Sidenav({ color }) {
             <span className="label">Customer</span>
           </NavLink>
         </Menu.Item>
-
-        <Menu.Item key="5">
-          <NavLink to="/game">
+      }
+      { isAdmin &&       
+        <Menu.Item key="13">
+          <NavLink to="/adminvoucher">
             <span
               className="icon"
               style={{
-                background: page === "game" ? color : "",
+                background: page === "adminvoucher" ? color : "",
+              }}
+            >
+              {tables}
+            </span>
+            <span className="label">Voucher</span>
+          </NavLink>
+        </Menu.Item>
+      }
+      { isAdmin &&       
+        <Menu.Item key="14">
+          <NavLink to="/admingame">
+            <span
+              className="icon"
+              style={{
+                background: page === "admingame" ? color : "",
               }}
             >
               {tables}
@@ -211,58 +223,108 @@ function Sidenav({ color }) {
             <span className="label">Game</span>
           </NavLink>
         </Menu.Item>
-
-        
-        
-        <Menu.Item key="6">
-          <NavLink to="/dashboard">
+      }
+      { isPartner &&       
+        <Menu.Item key="21">
+          <NavLink to="/partnerpromotion">
             <span
               className="icon"
               style={{
-                background: page === "dashboard" ? color : "",
-              }}
-            >
-              {dashboard}
-            </span>
-            <span className="label">Dashboard</span>
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item key="7">
-          <NavLink to="/tables">
-            <span
-              className="icon"
-              style={{
-                background: page === "tables" ? color : "",
+                background: page === "partnerpromotion" ? color : "",
               }}
             >
               {tables}
             </span>
-            <span className="label">Tables</span>
+            <span className="label">Promotion</span>
           </NavLink>
         </Menu.Item>
-        <Menu.Item key="8">
-          <NavLink to="/billing">
+      }
+      { isPartner &&       
+        <Menu.Item key="22">
+          <NavLink to="/partnerstore">
             <span
               className="icon"
               style={{
-                background: page === "billing" ? color : "",
+                background: page === "partnerstore" ? color : "",
               }}
             >
-              {billing}
+              {tables}
             </span>
-            <span className="label">Billing</span>
+            <span className="label">Store</span>
           </NavLink>
         </Menu.Item>
+      }
+      { isPartner &&       
+        <Menu.Item key="23">
+          <NavLink to="/partnervoucher">
+            <span
+              className="icon"
+              style={{
+                background: page === "partnervoucher" ? color : "",
+              }}
+            >
+              {tables}
+            </span>
+            <span className="label">Voucher</span>
+          </NavLink>
+        </Menu.Item>
+      }
+      { isPartner &&       
+        <Menu.Item key="24">
+          <NavLink to="/partnergame">
+            <span
+              className="icon"
+              style={{
+                background: page === "partnergame" ? color : "",
+              }}
+            >
+              {tables}
+            </span>
+            <span className="label">Game</span>
+          </NavLink>
+        </Menu.Item>
+      }
+      { isCustomer &&       
+        <Menu.Item key="31">
+          <NavLink to="/customerpromotion">
+            <span
+              className="icon"
+              style={{
+                background: page === "customerpromotion" ? color : "",
+              }}
+            >
+              {tables}
+            </span>
+            <span className="label">Promotion</span>
+          </NavLink>
+        </Menu.Item>
+      }     
+      { isCustomer &&       
+        <Menu.Item key="32">
+          <NavLink to="/customervoucher">
+            <span
+              className="icon"
+              style={{
+                background: page === "customervoucher" ? color : "",
+              }}
+            >
+              {tables}
+            </span>
+            <span className="label">Voucher</span>
+          </NavLink>
+        </Menu.Item>
+      }  
         
         <Menu.Item key="9" className="menu-item-header" >
           Account Pages
         </Menu.Item>
-        <Menu.Item key="10">
-          <NavLink to="/profile">
+        { isAdmin &&       
+        <Menu.Item key="19">
+          <NavLink to="/adminprofile">
             <span
               className="icon"
               style={{
-                background: page === "profile" ? color : "",
+                background: page === "adminprofile" ? color : "",
               }}
             >
               {profile}
@@ -270,18 +332,51 @@ function Sidenav({ color }) {
             <span className="label">Profile</span>
           </NavLink>
         </Menu.Item>
-        <Menu.Item key="11">
-          <NavLink to="/signin">
-            <span className="icon">{signin}</span>
-            <span className="label">Sign In</span>
+      }
+      { isPartner &&       
+        <Menu.Item key="29">
+          <NavLink to="/partnerprofile">
+            <span
+              className="icon"
+              style={{
+                background: page === "partnerprofile" ? color : "",
+              }}
+            >
+              {profile}
+            </span>
+            <span className="label">Profile</span>
           </NavLink>
         </Menu.Item>
-        <Menu.Item key="12">
-          <NavLink to="/signup">
-            <span className="icon">{signup}</span>
-            <span className="label">Sign Up</span>
+      }
+      { isCustomer &&       
+        <Menu.Item key="39">
+          <NavLink to="/customerprofile">
+            <span
+              className="icon"
+              style={{
+                background: page === "customerprofile" ? color : "",
+              }}
+            >
+              {profile}
+            </span>
+            <span className="label">Profile</span>
           </NavLink>
         </Menu.Item>
+      }
+      <Menu.Item key="40">
+          <NavLink to="/logout">
+            <span
+              className="icon"
+              style={{
+                background: page === "logout" ? color : "",
+              }}
+            >
+              {profile}
+            </span>
+            <span className="label">Logout</span>
+          </NavLink>
+        </Menu.Item>
+            
       </Menu>
     </>
   );

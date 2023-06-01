@@ -1,29 +1,26 @@
 import React, {useState, useEffect} from "react";
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
+
 import {
-  Card,
-  Radio,
-  Table,
-  Upload,
-  message,
-  Progress,  
-  Avatar,
-  Space,
-  Tag,  
-  Typography,  
+  Card,  
+  Table,  
   Input
 } from "antd";
+import {
+  SearchOutlined,
+  
+} from "@ant-design/icons";
 
 import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row'
+import Col from "react-bootstrap/Col";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import notification from "../../utils/notification";
+import AdminService from "../../services/admin.service";
+import goongService from "../../services/goong.service";
 
-import partnerService from "../../services/partner.service";
-
-export default function Customer () {
+export default function AdminPartner () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [partnerId, setPartnerId] = useState("");
@@ -33,11 +30,12 @@ export default function Customer () {
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
     const [password, setPassword] = useState("");
-    const [type, setType] = useState("partner")
-
+    
     const [partners, setPartners] = useState([]);
-    const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
+    const [searchPartners, setSearchPartners] = useState([]);
+    
+
+  const [search, setSearch] = useState("");
   
   const columns = [
     {
@@ -80,16 +78,6 @@ export default function Customer () {
        ),
     },
     {
-      title: "Status",
-      dataIndex: "isDeleted",
-      render: (text, record) => (
-        <Button onClick={()=> handleEditStatus(record)}>
-          {(record.isDeleted === true) ? "True" : "False"}
-        </Button>
-       ),
-      
-    },
-    {
       title: "Actions",
       key: 'action',      
       render: (record) => {
@@ -113,6 +101,25 @@ export default function Customer () {
     }
     
   ];
+
+  const handleKeyDownAddress = (e) => {
+    
+    if (e.key === 'Enter') {
+      goongService.getAddress(address).then(
+        response => {
+            
+            if(response.data && response.data.status === 'OK') {
+                const temp = response.data.results[0]
+                console.log(temp)
+                setAddress(temp.formatted_address);
+                
+            }
+        }, error => {
+            console.log(error)
+        }
+      )
+    }
+  }
   const handleEditStatus = (record) => {
     alert(record.id)
   }
@@ -126,13 +133,13 @@ export default function Customer () {
     const id = record.id
     
     
-    if(window.confirm(`Are you sure you want to delete this ${id} `)){
-      alert(` ${id} ${type}`)
-      partnerService.deletePartnerById(id, type).then(
+    if(window.confirm(notification.CONFIRM_DELETE)){
+      
+      AdminService.deletePartnerIdByAdmin(id).then(
         response => {
           console.log(response.data)
           if(response.data && response.data.success) {
-            alert("success");
+            alert(notification.DELETE);
             setIsLoad(!isLoad);
           }
           
@@ -166,19 +173,37 @@ export default function Customer () {
     setPartnerId("");
     setDisabled(false)
   }
+  const handleKeyDown = (e) => {
+    
+    if (e.key === 'Enter') {
+      const tempPartners = searchPartners.filter(e => e.email.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+      if(tempPartners.length === 0) {
+        const tempSearchPartners = searchPartners.filter(e => e.address.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+        setPartners(tempSearchPartners);
+      } else {
+        setPartners(tempPartners)
+      }
+      
+      
+    }
+  }
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
   };
+  const handleChangeSearch = (event) => {    
+    
+    setSearch(event.target.value)
+  }
 
   const handleClickSave = () => { 
     if(email && password && address && name) {
       if(partnerId === "") {
-        partnerService.postPartner(email, password, address,name).then(
+        AdminService.postPartnerByAdmin(email, password, address,name).then(
           response => {
             console.log(response.data)
             if(response.data && response.data.success === true ) {
-              alert("Create Success")
+              alert(notification.CREATE)
               setShow(false);
               setIsLoad(!isLoad)
               clearScreen();
@@ -190,32 +215,29 @@ export default function Customer () {
         )
       } else {
         
-        partnerService.putPartner(partnerId, password, address, name).then(
+        AdminService.putPartnerByAdmin(partnerId, password, address, name).then(
           response =>{
             if(response.data && response.data.success === true) {
-              alert("Edit Success")
+              alert(notification.EDIT)
               setShow(false);
               setIsLoad(!isLoad)
               clearScreen();
-            }
-            
+            }            
           }
         )
       }
       
     } else {
-      alert("Vui lòng nhập đầy đủ");
-    }
-    
+      alert(notification.INPUT);
+    }    
   }
-
- 
+  
   const handleClickClose = () => {
     setShow(false)
     clearScreen();
   }
   const onEditData = (record) => { 
-    partnerService.getPartnerById(record.id).then(
+    AdminService.getPartnerIdByAdmin(record.id).then(
       response => {
         if(response.data && response.data.success) {
           console.log(response.data.data)
@@ -234,13 +256,13 @@ export default function Customer () {
   };
     useEffect(()=>{   
       
-      partnerService.getAllPartner().then(
+      AdminService.getAllPartnerByAdmin().then(
         response => {
           if (response.data && response.data.success) {
+                  
             console.log(response.data.data)
-            setIsLoad(false)          
-            
             setPartners(response.data.data)
+            setSearchPartners(response.data.data)
           }
           
         }, error => {
@@ -254,15 +276,32 @@ export default function Customer () {
           <header className="jumbotron">
             <h1>Partner </h1> 
           </header>
-          <Button  className='btn btn-success justify-content-end' onClick={handleClickNew}>
-            New Partner
-          </Button>          
+          <Card>
+          <Row>
+              <Col md={3}>
+              <Input
+                value={search}
+                onChange={handleChangeSearch}
+                onKeyDown={handleKeyDown}
+                className="header-search"
+                placeholder="Type here..."
+                prefix={<SearchOutlined />}
+              />
+              </Col>
+              <Col  md={{ span: 2, offset: 7 }}>
+              <Button  className='btn  btn-success  ' onClick={handleClickNew}>
+                New Partner
+              </Button>  
+              </Col>
+            </Row>
+          </Card>                 
           
           <Card
           bordered={false}
           className="criclebox tablespace mb-24"
-          title="All Partner"          
+                 
           >
+            
             <div className="table-responsive">
             
             <Table
@@ -279,11 +318,11 @@ export default function Customer () {
           
         <Modal show={show} onHide={handleClickClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Partner</Modal.Title>
+          <Modal.Title> Partner</Modal.Title>
         </Modal.Header>
         <Modal.Body> 
           <Form.Group className="mb-3">
-            <Form.Label>Email address</Form.Label>
+            <Form.Label>Email </Form.Label>
             <Form.Control 
             disabled={disabled}
             type="email"         
@@ -305,6 +344,7 @@ export default function Customer () {
             placeholder="Address" 
             value={address}   
             required
+            onKeyDown={handleKeyDownAddress}
             onChange={handleChangeAddress}  
             />        
           </Form.Group>

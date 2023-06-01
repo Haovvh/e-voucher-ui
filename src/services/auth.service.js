@@ -17,15 +17,12 @@ const Signup = (email, address, phoneNumber, password, name) => (
   })
 );
 
-const GetUser = () => (
-   JSON.parse(localStorage.getItem('isuser'))
-);
+
 
 const Service = {
   Login, 
   Logout, 
-  Signup, 
-  GetUser
+  Signup
 }
 
 export default Service

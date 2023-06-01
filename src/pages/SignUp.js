@@ -15,7 +15,8 @@ import {
 
 import signinbg from "../assets/images/voucher--scaled.jpeg";
 import Service from "../services/auth.service"
-
+import goongService from "../services/goong.service";
+import notification from "../utils/notification";
 
 const { Title } = Typography;
 const { Header, Footer, Content } = Layout;
@@ -27,19 +28,14 @@ export default function SignUp () {
   const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  
-
-    const onFinish = (values) => {
-      console.log("Success:", values);
-    };
-
-    const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
-    };
+  const [lat, setLat] = useState(0);
+  const [long, setLong] = useState(0)
+    
     const handleChangeEmail = (event) =>{
       setEmail(event.target.value);
     }
     const handleChangeAddress = (event) =>{
+      
       setAddress(event.target.value);
     }
     const handleChangePhoneNumber = (event) =>{
@@ -63,16 +59,36 @@ export default function SignUp () {
       setPhoneNumber("");
     }
 
+    const handleKeyDownAddress = (e) => {
+    
+      if (e.key === 'Enter') {
+        goongService.getAddress(address).then(
+          response => {
+              
+              if(response.data && response.data.status === 'OK') {
+                  const temp = response.data.results[0]
+                  console.log(temp)
+                
+                  console.log(temp.formatted_address)
+                  setAddress(temp.formatted_address);
+                  setLat(temp.geometry.location.lat)
+                  setLong(temp.geometry.location.lng)
+              }
+          }, error => {
+              console.log(error)
+          }
+        )
+      }
+    }
   
   const handleOnClick = () =>{
-    if(password && confirmPassword && password === confirmPassword) {
-      if(email && password && address && phoneNumber){
-        
+    if (email && name && address && phoneNumber && password && confirmPassword) {
+      console.log(email , name , address , phoneNumber , password ,  confirmPassword)
+      if(password && confirmPassword && password === confirmPassword) {
         Service.Signup(email, address, phoneNumber, password, name).then(
           response =>{
             if(response.data.success) {
-              
-              alert(`SignUp Email:${email} Success. Please Login`)  
+              alert(notification.CREATE)              
               window.location.assign('/signin')
               clearInput();            
             }
@@ -83,12 +99,15 @@ export default function SignUp () {
             }
           }
         )
+      } 
+      else {
+        
+        alert(notification.PASSWORD)
       }
-    } 
-    else {
-      
-      alert("Password and Confirm Password are not the same")
+    } else {
+      alert(notification.INPUT)
     }
+    
         
   }
   useEffect ( () => {
@@ -105,22 +124,15 @@ export default function SignUp () {
         </Header>
         <Content className="signin">
           <Row gutter={[24, 0]} justify="space-around">
+            
             <Col
               xs={{ span: 24, offset: 0 }}
               lg={{ span: 6, offset: 2 }}
               md={{ span: 12 }}
             >
               <Title className="mb-15">Sign Up</Title>
-              
-              <Form
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                layout="vertical"
-                className="row-col"
-              >
-                <Form.Item
+              <Form.Item
                   className="username"
-                  label="Email"
                   name="email"
                   rules={[
                     {
@@ -135,10 +147,13 @@ export default function SignUp () {
                   onChange = {(event) =>{handleChangeEmail(event)}}
                   />
                 </Form.Item>
-
+              
+              
+                
+                <Row>
+                <Col className="col-5">
                 <Form.Item
                   className="username"
-                  label="Name"
                   name="name"
                   rules={[
                     {
@@ -152,12 +167,13 @@ export default function SignUp () {
                   value={name}
                   onChange = {(event) =>{handleChangeName(event)}}
                   />
-                </Form.Item>
-
+                </Form.Item>               
+                </Col>
+                <Col className="col-7">
                 <Form.Item
                   className="username"
-                  label="phoneNumber"
-                  name="phoneNumber"
+                  
+                  name="PhoneNumber"
                   rules={[
                     {
                       required: true,
@@ -171,10 +187,12 @@ export default function SignUp () {
                   onChange = {(event) =>{handleChangePhoneNumber(event)}}
                   />
                 </Form.Item>
+                
+                </Col>
+                </Row> 
+                
                 <Form.Item
-                  className="username"
-                  label="Address"
-                  name="address"
+                  
                   rules={[
                     {
                       required: true,
@@ -185,13 +203,14 @@ export default function SignUp () {
                   <Input 
                   placeholder="Address" 
                   value={address}
-                  onChange = {(event) =>{handleChangeAddress(event)}}
+                  onKeyDown={handleKeyDownAddress}
+                  onChange = {handleChangeAddress}
                   />
                 </Form.Item>
+                
 
                 <Form.Item
                   className="username"
-                  label="Password"
                   name="password"
                   rules={[
                     {
@@ -209,7 +228,6 @@ export default function SignUp () {
                 </Form.Item>
                 <Form.Item
                   className="username"
-                  label="Confirm Password"
                   name="confirmPassword"
                   rules={[
                     {
@@ -237,8 +255,6 @@ export default function SignUp () {
                     SIGN UP
                   </Button>
                 </Form.Item>
-                
-              </Form>
             </Col>
             <Col
               className="sign-img"
@@ -262,7 +278,7 @@ export default function SignUp () {
           </Menu>
           
           <p className="copyright">              
-            Copyright © 2021 E-Voucher Pro
+            Copyright © 2023 E-Voucher Pro
           </p>
         </Footer>
       </Layout>

@@ -1,47 +1,45 @@
 import React, {useState, useEffect} from "react";
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
+
 import {
-  Card,
-  Radio,
-  Table,
-  Upload,
-  message,
-  Progress,  
-  Avatar,
-  Space,
-  Tag,  
-  Typography,  
+  Card,  
+  Table,  
   Input
 } from "antd";
+import {
+  SearchOutlined,
+  
+} from "@ant-design/icons";
 
 import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row'
+import Col from "react-bootstrap/Col";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-
-import partnerService from "../../services/partner.service";
-
-export default function Partner () {
+import notification from "../../utils/notification";
+import AdminService from "../../services/admin.service";
+import goongService from "../../services/goong.service";
+export default function AdminCustomer () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
-    const [partnerId, setPartnerId] = useState("");
+    const [userId, setUserId] = useState("");
     
     const [disabled, setDisabled] = useState(false)
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
     const [password, setPassword] = useState("");
-    const [type, setType] = useState("partner")
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [datas, setDatas] = useState([]);
+    const [tempDatas, setTempDatas] = useState([]);
+    const [lat, setLat] = useState("");
+    const [long, setLong] = useState("")
 
-    const [partners, setPartners] = useState([]);
-    const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
+  const [search, setSearch] = useState("");
   
   const columns = [
     {
-      title: "IdPartner",
+      title: "Id",
       dataIndex: "id",        
       width: "5%",
       sorter: (a, b) => a.id - b.id,
@@ -62,6 +60,10 @@ export default function Partner () {
       dataIndex: "address"      
     },
     {
+      title: "Phone",
+      dataIndex: "phoneNumber"      
+    },
+    {
       title: "CreatedAt",
       dataIndex: "createdAt",
       render: (text, record) => (
@@ -79,16 +81,7 @@ export default function Partner () {
         </p>
        ),
     },
-    {
-      title: "Status",
-      dataIndex: "isDeleted",
-      render: (text, record) => (
-        <Button onClick={()=> handleEditStatus(record)}>
-          {(record.isDeleted === true) ? "True" : "False"}
-        </Button>
-       ),
-      
-    },
+   
     {
       title: "Actions",
       key: 'action',      
@@ -116,23 +109,23 @@ export default function Partner () {
   const handleEditStatus = (record) => {
     alert(record.id)
   }
-
-  const handleClickNew = () => {
-    setShow(true)
+  const handleChangePhone = (event) => {
+    setPhoneNumber(event.target.value)
   }
+  
 
   const onDeleteData = (record) => {
     
     const id = record.id
     
     
-    if(window.confirm(`Are you sure you want to delete this ${id} `)){
-      alert(` ${id} ${type}`)
-      partnerService.deletePartnerById(id, type).then(
+    if(window.confirm(notification.CONFIRM_DELETE)){
+      
+      AdminService.deleteuserIdByAdmin(id).then(
         response => {
           console.log(response.data)
           if(response.data && response.data.success) {
-            alert("success");
+            alert(notification.DELETE);
             setIsLoad(!isLoad);
           }
           
@@ -163,59 +156,77 @@ export default function Partner () {
     setEmail("");
     setAddress("");
     setPassword("");
-    setPartnerId("");
+    setUserId("");
+    setPhoneNumber("")
+    setLat("");
+    setLong("");
     setDisabled(false)
+  }
+  const handleKeyDown = (e) => {
+    
+    if (e.key === 'Enter') {
+      const tempdatas = tempDatas.filter(e => e.email.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+      if(tempdatas.length === 0) {
+        const temptempDatas = tempDatas.filter(e => e.address.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+        setDatas(temptempDatas);
+      } else {
+        setDatas(tempdatas)
+      }     
+      
+    }
+  }
+  const handleKeyDownAddress = (e) => {
+    
+    if (e.key === 'Enter') {
+      goongService.getAddress(address).then(
+        response => {
+            
+            if(response.data && response.data.status === 'OK') {
+                const temp = response.data.results[0]
+                console.log(temp)
+                setAddress(temp.formatted_address);
+                
+            }
+        }, error => {
+            console.log(error)
+        }
+      )
+    }
   }
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
   };
+  const handleChangeSearch = (event) => {    
+    
+    setSearch(event.target.value)
+  }
 
   const handleClickSave = () => { 
     if(email && password && address && name) {
-      if(partnerId === "") {
-        partnerService.postPartner(email, password, address,name).then(
-          response => {
-            console.log(response.data)
-            if(response.data && response.data.success === true ) {
-              alert("Create Success")
-              setShow(false);
-              setIsLoad(!isLoad)
-              clearScreen();
-            }
-            
-          }, error => {
-            console.log(error)
-          }
-        )
-      } else {
+      AdminService.putCustomerByAdmin(userId, password, address, name, phoneNumber, lat, long).then(
+        response =>{
+          if(response.data && response.data.success === true) {
+            alert(notification.EDIT)
+            setShow(false);
+            setIsLoad(!isLoad)
+            clearScreen();
+          }            
+        }
+      )
         
-        partnerService.putPartner(partnerId, password, address, name).then(
-          response =>{
-            if(response.data && response.data.success === true) {
-              alert("Edit Success")
-              setShow(false);
-              setIsLoad(!isLoad)
-              clearScreen();
-            }
-            
-          }
-        )
-      }
       
     } else {
-      alert("Vui lòng nhập đầy đủ");
-    }
-    
+      alert(notification.INPUT);
+    }    
   }
-
- 
+  
   const handleClickClose = () => {
     setShow(false)
     clearScreen();
   }
   const onEditData = (record) => { 
-    partnerService.getPartnerById(record.id).then(
+    AdminService.getCustomerIdByAdmin(record.id).then(
       response => {
         if(response.data && response.data.success) {
           console.log(response.data.data)
@@ -223,7 +234,10 @@ export default function Partner () {
           setEmail(temp.email)
           setAddress(temp.address)
           setName(temp.name)
-          setPartnerId(record.id)
+          setPhoneNumber(temp.phoneNumber)
+          setLat(temp.lat)
+          setLong(temp.long)
+          setUserId(record.id)
           setShow(true)
           setDisabled(true)
         }
@@ -234,13 +248,13 @@ export default function Partner () {
   };
     useEffect(()=>{   
       
-      partnerService.getAllPartner().then(
+      AdminService.getAllCustomerByAdmin().then(
         response => {
           if (response.data && response.data.success) {
+                  
             console.log(response.data.data)
-            setIsLoad(false)          
-            
-            setPartners(response.data.data)
+            setDatas(response.data.data)
+            setTempDatas(response.data.data)
           }
           
         }, error => {
@@ -252,22 +266,34 @@ export default function Partner () {
         <React.Fragment>
         <div className="container">
           <header className="jumbotron">
-            <h1>Partner </h1> 
+            <h1>Customer </h1> 
           </header>
-          <Button  className='btn btn-success justify-content-end' onClick={handleClickNew}>
-            New Partner
-          </Button>          
+          <Card>
+          <Row>
+              <Col md={3}>
+              <Input
+                value={search}
+                onChange={handleChangeSearch}
+                onKeyDown={handleKeyDown}
+                className="header-search"
+                placeholder="Type here..."
+                prefix={<SearchOutlined />}
+              />
+              </Col>              
+            </Row>
+          </Card>                 
           
           <Card
           bordered={false}
           className="criclebox tablespace mb-24"
-          title="All Partner"          
+                 
           >
+            
             <div className="table-responsive">
             
             <Table
               columns={columns}
-              dataSource={partners}
+              dataSource={datas}
               pagination={true}
               onChange={onChange}
               rowKey="id"
@@ -279,11 +305,11 @@ export default function Partner () {
           
         <Modal show={show} onHide={handleClickClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Partner</Modal.Title>
+          <Modal.Title>Edit Partner</Modal.Title>
         </Modal.Header>
         <Modal.Body> 
           <Form.Group className="mb-3">
-            <Form.Label>Email address</Form.Label>
+            <Form.Label>Email</Form.Label>
             <Form.Control 
             disabled={disabled}
             type="email"         
@@ -303,9 +329,19 @@ export default function Partner () {
             <Form.Label>Address</Form.Label>
             <Form.Control 
             placeholder="Address" 
+            onKeyDown={handleKeyDownAddress}
             value={address}   
             required
             onChange={handleChangeAddress}  
+            />        
+          </Form.Group>
+          <Form.Group className="mb-3" >
+            <Form.Label>Phone</Form.Label>
+            <Form.Control 
+            placeholder="Phone" 
+            value={phoneNumber}   
+            required
+            onChange={handleChangePhone}  
             />        
           </Form.Group>
           <Form.Group className="mb-3" >

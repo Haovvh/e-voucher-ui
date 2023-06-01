@@ -16,6 +16,7 @@ import {
 
 import signinbg from "../assets/images/img-signin.jpg";
 import Service from "../services/auth.service"
+import { WindowsOutlined } from "@ant-design/icons";
 
 const Option = Select.Option;
 
@@ -51,9 +52,11 @@ export default function SignIn () {
       Service.Login(email, password, role).then(
         response =>{
           if( response.data && response.data.success ) {
+            console.log(response.data)
             localStorage.setItem("isuser", JSON.stringify(response.data));
             alert("SignIn Success")
             window.location.assign('/')
+            
           } 
         }, error => {
           if(error.response && error.response.data && error.response.status === 401 && !error.response.data.success) {
@@ -64,6 +67,7 @@ export default function SignIn () {
     }    
   }
   useEffect ( () => {
+    Service.Logout();
     localStorage.clear();
   }, [])
 
@@ -86,12 +90,14 @@ export default function SignIn () {
               <Title className="font-regular text-muted" level={5}>
                 Enter your email and password to sign in
               </Title>
+              
               <Form
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 layout="vertical"
                 className="row-col"
               >
+                
                 <Form.Item
                   className="username"
                   label="Email"
@@ -128,6 +134,7 @@ export default function SignIn () {
                   onChange = {(event) =>{handleChangePassword(event)}}
                   />
                 </Form.Item>
+                
 
                 <Form.Item 
                 className="username"
@@ -153,6 +160,7 @@ export default function SignIn () {
                     }                    
                   </Select>
                 </Form.Item>
+                
 
                 <Form.Item>
                   <Button
@@ -167,12 +175,13 @@ export default function SignIn () {
                 </Form.Item>
                 <p className="font-semibold text-muted">
                   Don't have an account?{" "}
-                  <Link to="/sign-up" className="text-dark font-bold">
+                  <Link to="/signup" className="text-dark font-bold">
                     Sign Up
                   </Link>
                 </p>
               </Form>
             </Col>
+            
             <Col
               className="sign-img"
               style={{ padding: 12 }}
@@ -184,6 +193,7 @@ export default function SignIn () {
             </Col>
           </Row>
         </Content>
+        
         <Footer>
           <Menu mode="horizontal">
             <Menu.Item key="1">Company</Menu.Item>
@@ -195,7 +205,7 @@ export default function SignIn () {
           </Menu>
           
           <p className="copyright">              
-            Copyright © 2021 E-Voucher Pro
+            Copyright © 2023 E-Voucher Pro
           </p>
         </Footer>
       </Layout>

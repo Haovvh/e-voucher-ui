@@ -22,23 +22,21 @@ import {
   
   Input, 
   Select
+  
 } from "antd";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import VoucherService from '../../services/voucher.service'
-import promotionService from '../../services/promotion.service';
-import gameService from '../../services/game.service';
+import notification from '../../utils/notification';
+import partnerService from '../../services/partner.service';
 
-
-export default function NewPromotion(props) {
+export default function PartnerNewPromotion(props) {
 
     const [show, setShow] = useState(false);
     const [voucherData, setVoucherData] = useState([])
     const [voucher, setVoucher] = useState({
-      key: 0,
-      id: 0,
-      title: "Vui lòng chọn voucher",
+      id: "",
+      title: "",
       description: "",
       value: ""
     });
@@ -93,6 +91,11 @@ export default function NewPromotion(props) {
         render: (record) => {
           return (
             <>
+            <EditOutlined
+              onClick={() => {
+                onEditData(record);
+              }}
+            />
               <DeleteOutlined
                 onClick={() => {
                   onDeleteVoucher(record);
@@ -107,22 +110,45 @@ export default function NewPromotion(props) {
       
     ];
 
+    const onEditData = (record) => {
+      const temp = vouchers.filter(e=> e.id === record.id)
+      console.log(temp[0])
+      if(temp && temp[0]) {
+        setVoucher({
+          id: temp[0].id,
+          title: temp[0].title,
+          description:temp[0].description,
+          value: temp[0].value
+        })
+        setQuantity(temp[0].quantity)
+        setShow(true)
+      }
+    }
+
     const onDeleteVoucher = (record) => {
       
       const id = record.id
-
-      const title = record.title;
       
-      if(window.confirm(`Are you sure you want to delete this ${id} ${title}}`)){
+      if(window.confirm(notification.CONFIRM_DELETE)){
         setVouchers((option) =>
         option.filter((e)=> e.id !== id)
         )
       }
       
     };
+    const clearScreen = () => {
+      setQuantity("");
+      setVoucher({
+        id: 0,
+        title : "",
+        description: "",
+        value: ""
+      })
+    }
     
     const handleClickClose = () => {
       setShow(false)
+      clearScreen();
     }
   
 
@@ -167,7 +193,8 @@ export default function NewPromotion(props) {
       }))
     )
     const handleChangeQuantity = (event) => (
-      setQuantity(event.target.value)
+
+      setQuantity(parseInt(event.target.value, 10))
     )
 
     const handleChangeStart = (event) => (
@@ -200,12 +227,11 @@ export default function NewPromotion(props) {
       if(vouchers.length > 0 && promotion.title && promotion.description && promotion.start && promotion.end && gameID !== 0) {
         if(promotion.start < promotion.end) {
           if(promotionID === 0) {
-            promotionService.postPromotion(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, gameID).then(
+            partnerService.postPromotionByPartner(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, gameID).then(
               response=> {
                 if(response.data && response.data.success) {
                   alert("Create Success")
-                  window.location.assign('/promotion')
-                  
+                  window.location.assign('/partnerpromotion')                  
                 }
                 
               }, error => {
@@ -213,11 +239,11 @@ export default function NewPromotion(props) {
               }
             )
           } else {
-            promotionService.putPromotion(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, promotionID, gameID).then(
+            partnerService.putPromotionByPartner(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, promotionID, gameID).then(
               response=> {
                 if(response.data && response.data.success) {
                   alert("Update Success")
-                  window.location.assign('/promotion')
+                  window.location.assign('/partnerpromotion')
                   
                 }
                 
@@ -239,8 +265,7 @@ export default function NewPromotion(props) {
     }
   useEffect(()=>{   
     if(props.show) {
-
-      VoucherService.getAllVoucher().then(
+      partnerService.getAllVoucherByPartner().then(
         response => {
           if(response.data && response.data.success) {
             
@@ -260,7 +285,7 @@ export default function NewPromotion(props) {
           console.log(error)
         }
       )
-      gameService.getAllGame().then(
+      partnerService.getAllGameByPartner().then(
         response => {
           if(response.data && response.data.success) {
             console.log(response.data.data)
@@ -277,7 +302,7 @@ export default function NewPromotion(props) {
         }
       )
       if(props.id) {
-        promotionService.getPromotionById(props.id).then(
+        partnerService.getPromotionIdByPartner(props.id).then(
           response=>{
             if(response.data && response.data.success && response.data.data) {
               console.log(response.data.data)
@@ -436,7 +461,7 @@ export default function NewPromotion(props) {
 
       <Modal show={show} onHide={handleClickClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Voucher</Modal.Title>
+          <Modal.Title>Voucher</Modal.Title>
         </Modal.Header>
         <Modal.Body> 
         <label>Voucher</label>

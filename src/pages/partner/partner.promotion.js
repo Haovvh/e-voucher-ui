@@ -16,12 +16,14 @@ import {
   Form,
   Input
 } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import promotionService from '../../services/promotion.service';
+import { EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 
-import NewPromotion from "./New.Promotion";
+import partnerService from "../../services/partner.service";
 
-export default function Promotion () {
+import PartnerNewPromotion from "./partner.newpromotion";
+import header from "../../services/header.service";
+
+export default function PartnerPromotion () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [promotionID, setPromotionID] = useState("");
@@ -30,6 +32,8 @@ export default function Promotion () {
     }
 
     const [promotions, setPromotions] = useState([]);
+    const [tempPromotions, setTempPromotions] = useState([]);
+    const [search, setSearch] = useState("");
     
   const columns = [
     {
@@ -97,9 +101,24 @@ export default function Promotion () {
     }
     
   ];
+
+  const handleKeyDown = (e) => {
+    
+    if (e.key === 'Enter') {
+      const tempDataTitle = tempPromotions.filter(e => e.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+      if(tempDataTitle.length === 0) {
+        const tempDataDescription = tempPromotions.filter(e => e.description.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+        setPromotions(tempDataDescription);
+      } else {
+        setPromotions(tempDataTitle)
+      }
+      
+      
+    }
+  }
   
   const handleEditStatus = (record) => {
-    alert(record.id)
+    
   } 
 
   const onDeleteData = (record) => {
@@ -108,11 +127,11 @@ export default function Promotion () {
     const title = record.title;
     
     if(window.confirm(`Are you sure you want to delete this ${id} ${title}}`)){
-      promotionService.deletePromotion(id).then(
+      partnerService.deletePromotion(id).then(
         response => {
           if(response.data && response.data.success) {
             alert("Delete success");
-            setIsLoad(true);
+            setIsLoad(!isLoad);
           }
           
         }, error => {
@@ -121,21 +140,23 @@ export default function Promotion () {
       )     
     }    
   };
+  const handleChangeSearch = (event) => {    
+    
+    setSearch(event.target.value)
+  }
 
   
   const onEditData = (record) => { 
-
     setPromotionID(record.id)
     setShow(true)
     
   };
     useEffect(()=>{   
-      promotionService.getAllPromotion().then(
+      partnerService.getAllPromotionByPartner(header.getUserId()).then(
         response => {
           console.log(response.data)
-          if (response.data && response.data.success) {
-            setIsLoad(false)          
-            
+          if (response.data && response.data.success) {                 
+            setTempPromotions(response.data.data)
             setPromotions(response.data.data)
           }
           
@@ -150,16 +171,33 @@ export default function Promotion () {
           <header className="jumbotron">
             <h1>Promotions </h1> 
           </header>
-          {!show && (<Button  className='btn btn-success justify-content-end' onClick={handleClickNew}>
+          <Card>
+          <Row>
+              <Col md={6}>
+              <Input
+                value={search}
+                onChange={handleChangeSearch}
+                onKeyDown={handleKeyDown}
+                className="header-search"
+                placeholder="Type here..."
+                prefix={<SearchOutlined />}
+              />
+              </Col>
+              <Col  md={{ span: 3, offset: 15 }}>
+              {!show && (<Button  className='btn btn-success ' onClick={handleClickNew}>
             New Promotion
           </Button>)}
+              </Col>
+            </Row>
+          </Card>
           
-          <NewPromotion id={promotionID} show={show}/>
+          
+          <PartnerNewPromotion id={promotionID} show={show}/>
           {show ? <></> : 
           <Card
           bordered={false}
           className="criclebox tablespace mb-24"
-          title="All Promotion"
+          
           
           >
             <div className="table-responsive">
