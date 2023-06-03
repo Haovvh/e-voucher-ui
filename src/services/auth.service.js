@@ -11,9 +11,9 @@ const Logout = () => (
   localStorage.removeItem("isuser")  
 );
 
-const Signup = (email, address, phoneNumber, password, name) => (
+const Signup = (email, address, phoneNumber, password, name, lat, long) => (
   axios.post(`${process.env.REACT_APP_API_URL}/user/signup`, {
-    email, address, phoneNumber, password, name
+    email, address, phoneNumber, password, name, lat, long
   })
 );
 

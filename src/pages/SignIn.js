@@ -4,21 +4,16 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Layout,
-  Menu,
-  Button,
-  Row,
-  Col,
-  Typography,
-  Form,
-  Input,  
-  Select
+  Menu, 
+  
+  Typography,  
+  
 } from "antd";
-
+import {Form, Row, Col, Card, Button} from 'react-bootstrap'
 import signinbg from "../assets/images/img-signin.jpg";
 import Service from "../services/auth.service"
-import { WindowsOutlined } from "@ant-design/icons";
 
-const Option = Select.Option;
+import notification from "../utils/notification";
 
 const { Title } = Typography;
 const { Header, Footer, Content } = Layout;
@@ -29,13 +24,6 @@ export default function SignIn () {
   const roleUser = ["customer", "partner", "admin"];
   const [role, setRole] = useState("");
 
-    const onFinish = (values) => {
-      console.log("Success:", values);
-    };
-
-    const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
-    };
     const handleChangeEmail = (event) =>{
       setEmail(event.target.value);
     }
@@ -43,12 +31,13 @@ export default function SignIn () {
       setPassword(event.target.value);
     }
 
-  const handleChangeRole = (value) =>{
-    setRole(value);
+  const handleChangeRole = (event) =>{
+    setRole(event.target.value);
   }
   const handleOnClick = () =>{
-    
+    alert(`${email} ${password} ${role}`)
     if(email && password && role){
+      
       Service.Login(email, password, role).then(
         response =>{
           if( response.data && response.data.success ) {
@@ -64,7 +53,9 @@ export default function SignIn () {
           }
         }
       )
-    }    
+    } else {
+      alert(notification.ERROR)
+    }
   }
   useEffect ( () => {
     Service.Logout();
@@ -80,90 +71,38 @@ export default function SignIn () {
           </div>
         </Header>
         <Content className="signin">
+          <Card>
           <Row gutter={[24, 0]} justify="space-around">
             <Col
-              xs={{ span: 24, offset: 0 }}
-              lg={{ span: 6, offset: 2 }}
-              md={{ span: 12 }}
+              xs={{ span: 4, offset: 0 }}
+              lg={{ span: 4, offset: 1 }}
+              md={{ span: 4 }}
             >
               <Title className="mb-15">Sign In</Title>
-              <Title className="font-regular text-muted" level={5}>
-                Enter your email and password to sign in
-              </Title>
               
-              <Form
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                layout="vertical"
-                className="row-col"
-              >
-                
-                <Form.Item
-                  className="username"
-                  label="Email"
-                  name="email"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your email!",
-                    },
-                  ]}
-                >
-                  <Input 
-                  placeholder="Email" 
-                  value={email}
-                  onChange = {(event) =>{handleChangeEmail(event)}}
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  className="username"
-                  label="Password"
-                  name="password"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your password!",
-                    },
-                  ]}
-                >
-                  <Input 
-                  placeholder="Password" 
-                  type="password"
-                  value={password}
-                  onChange = {(event) =>{handleChangePassword(event)}}
-                  />
-                </Form.Item>
-                
-
-                <Form.Item 
-                className="username"
-                label="Role"
-                name="Role"  
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select a Role",
-                  },
-                ]}               
-                >
-                  <Select  
-                  placeholder="Please select a Role"
-                  onChange = {(value) => {                
-                handleChangeRole(value);
-                }}> 
-                  
-                    {
-                      roleUser && Array.isArray(roleUser) && roleUser.map(value =>{
-                        return <Option key={value} value={value}>{value}</Option>
-                      })
-                    }                    
-                  </Select>
-                </Form.Item>
-                
-
-                <Form.Item>
-                  <Button
+              
+              <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>Email </Form.Label>
+              <Form.Control type="email" placeholder="Enter email" value={email}
+                  onChange = {(event) =>{handleChangeEmail(event)}} />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label>Password</Form.Label>
+                <Form.Control type="password" placeholder="Password" value={password}
+                  onChange = {(event) =>{handleChangePassword(event)}} />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label>Role </Form.Label>
+              <Form.Select 
+              onChange={(event) => handleChangeRole(event)}
+              aria-label="Default select example">
+                <option>Vui lòng chọn</option>
+                <option value="admin">Admin</option>
+                <option value="partner">Partner</option>
+                <option value="customer">Customer</option>
+              </Form.Select>
+              </Form.Group>
+              <Button
                     type="primary"
                     htmlType="submit"
                     style={{ width: "100%" }}
@@ -172,26 +111,28 @@ export default function SignIn () {
                   >
                     SIGN IN
                   </Button>
-                </Form.Item>
+              
+                
                 <p className="font-semibold text-muted">
                   Don't have an account?{" "}
                   <Link to="/signup" className="text-dark font-bold">
                     Sign Up
                   </Link>
                 </p>
-              </Form>
             </Col>
             
             <Col
               className="sign-img"
               style={{ padding: 12 }}
-              xs={{ span: 24 }}
-              lg={{ span: 12 }}
-              md={{ span: 12 }}
+              xs={{ span: 6 }}
+              lg={{ span: 6 }}
+              md={{ span: 6 }}
             >
               <img src={signinbg} alt="" />
             </Col>
           </Row>
+          </Card>
+          
         </Content>
         
         <Footer>

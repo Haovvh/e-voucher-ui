@@ -1,18 +1,13 @@
 
 import React, { useState, useEffect } from "react";
-
+import { Link } from "react-router-dom";
 import {
   Layout,
-  Menu,
-  Button,
-  Row,
-  Col,
-  Typography,
-  Form,
-  Input,  
-  Select
+  Menu,   
+  Typography
 } from "antd";
-
+import { BiHide } from 'react-icons/bi';
+import {Form, Row, Col, Card, Button, InputGroup} from 'react-bootstrap'
 import signinbg from "../assets/images/voucher--scaled.jpeg";
 import Service from "../services/auth.service"
 import goongService from "../services/goong.service";
@@ -30,6 +25,8 @@ export default function SignUp () {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [lat, setLat] = useState(0);
   const [long, setLong] = useState(0)
+  const [showPass, setShowPass] = useState(false)
+  const [showConfirmPass, setShowConfirmPass] = useState(false)
     
     const handleChangeEmail = (event) =>{
       setEmail(event.target.value);
@@ -58,6 +55,12 @@ export default function SignUp () {
       setPassword("");
       setPhoneNumber("");
     }
+    const handleshowPass = () =>{
+      setShowPass(!showPass)
+    }
+    const handleshowConfirmPass = () =>{
+      setShowConfirmPass(!showConfirmPass)
+    }
 
     const handleKeyDownAddress = (e) => {
     
@@ -85,7 +88,7 @@ export default function SignUp () {
     if (email && name && address && phoneNumber && password && confirmPassword) {
       console.log(email , name , address , phoneNumber , password ,  confirmPassword)
       if(password && confirmPassword && password === confirmPassword) {
-        Service.Signup(email, address, phoneNumber, password, name).then(
+        Service.Signup(email, address, phoneNumber, password, name, lat, long).then(
           response =>{
             if(response.data.success) {
               alert(notification.CREATE)              
@@ -123,129 +126,84 @@ export default function SignUp () {
           </div>
         </Header>
         <Content className="signin">
+        <Card>
           <Row gutter={[24, 0]} justify="space-around">
-            
             <Col
-              xs={{ span: 24, offset: 0 }}
-              lg={{ span: 6, offset: 2 }}
-              md={{ span: 12 }}
+              xs={{ span: 6, offset: 0 }}
+              lg={{ span: 6, offset: 1 }}
+              md={{ span: 6 }}
             >
               <Title className="mb-15">Sign Up</Title>
-              <Form.Item
-                  className="username"
-                  name="email"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your email!",
-                    },
-                  ]}
-                >
-                  <Input 
-                  placeholder="Email" 
-                  value={email}
-                  onChange = {(event) =>{handleChangeEmail(event)}}
-                  />
-                </Form.Item>
-              
-              
-                
-                <Row>
-                <Col className="col-5">
-                <Form.Item
-                  className="username"
-                  name="name"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your name!",
-                    },
-                  ]}
-                >
-                  <Input 
-                  placeholder="Name" 
-                  value={name}
-                  onChange = {(event) =>{handleChangeName(event)}}
-                  />
-                </Form.Item>               
+              <Row>
+                <Col>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                  <Form.Label>Email </Form.Label>
+                  <Form.Control type="email" placeholder="Enter email" 
+                      value={email}
+                      onChange = {(event) =>{handleChangeEmail(event)}} />
+                  </Form.Group>
                 </Col>
-                <Col className="col-7">
-                <Form.Item
-                  className="username"
-                  
-                  name="PhoneNumber"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your phoneNumber!",
-                    },
-                  ]}
-                >
-                  <Input 
-                  placeholder="phoneNumber" 
-                  value={phoneNumber}
-                  onChange = {(event) =>{handleChangePhoneNumber(event)}}
-                  />
-                </Form.Item>
-                
+                <Col>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                  <Form.Label>Name </Form.Label>
+                  <Form.Control type="text" placeholder="Name" 
+                      value={name}
+                      onChange = {(event) =>{handleChangeName(event)}} />
+                  </Form.Group>
                 </Col>
-                </Row> 
+              </Row>
+              <Row>
+                <Col>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                  <Form.Label>Phone  </Form.Label>
+                  <Form.Control type="email"  placeholder="Phone" 
+                      value={phoneNumber}
+                      onChange = {(event) =>{handleChangePhoneNumber(event)}} />
+                  </Form.Group>
+                </Col>
+                <Col>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                  <Form.Label>Address </Form.Label>
+                  <Form.Control type="text" placeholder="Address" 
+                      value={address}
+                      onKeyDown={handleKeyDownAddress}
+                      onChange = {handleChangeAddress} />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={{ span: 6, offset: 0 }}>
                 
-                <Form.Item
-                  
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your Address!",
-                    },
-                  ]}
-                >
-                  <Input 
-                  placeholder="Address" 
-                  value={address}
-                  onKeyDown={handleKeyDownAddress}
-                  onChange = {handleChangeAddress}
-                  />
-                </Form.Item>
+                  <Form.Label>Password  </Form.Label>
+                  <InputGroup className="mb-3">
+                  <Form.Control   placeholder="Password" 
+                      type={!showPass ? "password" : "text"} 
+                      value={password}
+                      onChange = {(event) =>{handleChangePassword(event)}} />
+                  <InputGroup.Text><BiHide onClick={handleshowPass}/></InputGroup.Text>
+                  </InputGroup>                  
+                 
+                </Col>
                 
-
-                <Form.Item
-                  className="username"
-                  name="password"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your password!",
-                    },
-                  ]}
-                >
-                  <Input 
-                  placeholder="Password" 
-                  type="password"
-                  value={password}
-                  onChange = {(event) =>{handleChangePassword(event)}}
-                  />
-                </Form.Item>
-                <Form.Item
-                  className="username"
-                  name="confirmPassword"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your Confirm Password!",
-                    },
-                  ]}
-                >
-                  <Input 
-                  placeholder="Confirm Password" 
-                  type="password"
-                  value={confirmPassword}
-                  onChange = {(event) =>{handleChangeConfirmPassword(event)}}
-                  />
-                </Form.Item>
-
-                <Form.Item>
-                  <Button
+              </Row>
+              <Row>
+              <Col md={{ span: 6, offset: 0 }}>
+                
+                <Form.Label>Confirm Password  </Form.Label>
+                <InputGroup className="mb-3">
+                <Form.Control   placeholder="Password" 
+                    type={!showConfirmPass ? "password" : "text"}
+                    value={confirmPassword}
+                    onChange = {(event) =>{handleChangeConfirmPassword(event)}} />
+                <InputGroup.Text><BiHide onClick={handleshowConfirmPass}/></InputGroup.Text>
+                </InputGroup>
+                
+               
+              </Col>
+              </Row>
+              <Row>
+              <Col md={{ span: 6, offset: 0 }}>
+              <Button
                     type="primary"
                     htmlType="submit"
                     style={{ width: "100%" }}
@@ -254,18 +212,29 @@ export default function SignUp () {
                   >
                     SIGN UP
                   </Button>
-                </Form.Item>
-            </Col>
-            <Col
+                  
+                  <p className="font-semibold text-muted">
+                  SignIn{" "}
+                  <Link to="/signin" className="text-dark font-bold">
+                    Sign In
+                  </Link>
+                </p>
+                </Col>
+              </Row>
+              
+              </Col>
+              <Col
               className="sign-img"
               style={{ padding: 12 }}
-              xs={{ span: 24 }}
-              lg={{ span: 12 }}
-              md={{ span: 12 }}
+              xs={{ span: 4 }}
+              lg={{ span: 4 }}
+              md={{ span: 4 }}
             >
               <img src={signinbg} alt="" />
             </Col>
-          </Row>
+              </Row>
+              </Card>
+          
         </Content>
         <Footer>
           <Menu mode="horizontal">

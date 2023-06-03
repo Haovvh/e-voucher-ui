@@ -38,6 +38,12 @@ const deleteAdminById = (id, type) =>(
     })
 );
 
+const getAllCategoryByAdmin = () => (
+    axios.get(`${process.env.REACT_APP_API_URL}/admin/category`, { 
+       headers: header.authHeader() 
+   })
+);
+
 const getAllStatusByAdmin = () => (
     axios.get(`${process.env.REACT_APP_API_URL}/admin/status`, { 
        headers: header.authHeader() 
@@ -93,18 +99,18 @@ const getCustomerIdByAdmin = (id) => (
    })
 );
 
-const postPartnerByAdmin = (email, password, address, name) => (     
+const postPartnerByAdmin = (email, password, address, name, categoryID) => (     
     axios.post(`${process.env.REACT_APP_API_URL}/admin/account`,{
-        email, password, address, name
+        email, password, address, name, categoryID
     },
     { 
         headers: header.authHeader() 
     })
 );
 
-const putPartnerByAdmin = (id, password, address, name) =>(
+const putPartnerByAdmin = (id, password, address, name, categoryID) =>(
     axios.put(`${process.env.REACT_APP_API_URL}/admin/account`,{
-        id, password, address, name,
+        id, password, address, name, categoryID,
         type: 'partner'
     },
     { 
@@ -220,6 +226,7 @@ const AdminService = {
     getAdminById,
     postAdmin,
     putAdmin,
+    getAllCategoryByAdmin,
     getAllStatusByAdmin,
     putStatusPromotionByAdmin,
     getCustomerIdByAdmin,

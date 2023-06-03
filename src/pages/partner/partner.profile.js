@@ -95,6 +95,9 @@ export default function PartnerProfile () {
   const handleClickCancel = () => {
     setIsLoad(!isLoad)
   }
+  const handleClickChangePass = () => {
+    
+  }
   
     useEffect(()=>{   
       partnerService.getPartnerIdByPartner().then(
@@ -120,6 +123,13 @@ export default function PartnerProfile () {
             <h1>Profile </h1> 
           </header>
           <Card >
+          <Row className="container">
+          <Col md={{ span: 5, offset: 4 }}>
+            <Button onClick={handleClickChangePass}>
+              Change Pass
+            </Button>
+          </Col>
+          </Row>
           <Row className="container">
             <Col md={{ span: 5, offset: 4 }}>
             <Form.Group className="mb-3">
@@ -171,7 +181,7 @@ export default function PartnerProfile () {
             
             <Form.Control 
             placeholder="Password"
-            type={showPass ? "password" : "text"} 
+            type={!showPass ? "password" : "text"} 
             value={password}   
             onChange={(event) => {handleChangePass(event)}}  
             

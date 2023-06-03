@@ -158,7 +158,7 @@ function Sidenav({ color }) {
                 background: page === "adminpartner" ? color : "",
               }}
             >
-              {tables}
+              {billing}
             </span>
             <span className="label">Partner</span>
           </NavLink>
@@ -188,7 +188,7 @@ function Sidenav({ color }) {
                 background: page === "admincustomer" ? color : "",
               }}
             >
-              {tables}
+              {signin}
             </span>
             <span className="label">Customer</span>
           </NavLink>

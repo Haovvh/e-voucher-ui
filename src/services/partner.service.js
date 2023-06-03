@@ -41,10 +41,10 @@ const putPromotionByPartner = (title, description, start, end, vouchers, id, gam
 );
 
 const deletePromotion = (id) => (
-     axios.delete(`${process.env.REACT_APP_API_URL}/partner/promotion/${id}`,{
-        
-    },{ 
+     axios.delete(`${process.env.REACT_APP_API_URL}/partner/promotion/${id}`,{ 
         headers: header.authHeader() 
+    }, {
+
     })
     
 );
@@ -61,9 +61,18 @@ const getStoreIdByPartner = (id) => (
    })
 );
 
-const putPartnerByPartner = ( password, address, name) =>(
-    axios.put(`${process.env.REACT_APP_API_URL}/partner`,{
-         password, address, name,
+const putPartnerByPartner = ( check, address, name) =>(
+    axios.put(`${process.env.REACT_APP_API_URL}/partner/info`,{
+        check, address, name,
+        id : header.getUserId()
+    },
+    { 
+        headers: header.authHeader() 
+    })
+);
+const putPasswordPartnerByPartner = ( check, password) =>(
+    axios.put(`${process.env.REACT_APP_API_URL}/partner/password`,{
+        check, password,
         id : header.getUserId()
     },
     { 
@@ -127,6 +136,7 @@ const partnerService = {
     deleteStore,
     putRewardByPartner,
     getPartnerIdByPartner,
-    putPartnerByPartner
+    putPartnerByPartner,
+    putPasswordPartnerByPartner
 }
 export default partnerService

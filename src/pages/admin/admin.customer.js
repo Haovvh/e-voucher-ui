@@ -34,6 +34,7 @@ export default function AdminCustomer () {
     const [tempDatas, setTempDatas] = useState([]);
     const [lat, setLat] = useState("");
     const [long, setLong] = useState("")
+    
 
   const [search, setSearch] = useState("");
   
@@ -203,7 +204,7 @@ export default function AdminCustomer () {
   }
 
   const handleClickSave = () => { 
-    if(email && password && address && name) {
+    if(email && password && address && name ) {
       AdminService.putCustomerByAdmin(userId, password, address, name, phoneNumber, lat, long).then(
         response =>{
           if(response.data && response.data.success === true) {

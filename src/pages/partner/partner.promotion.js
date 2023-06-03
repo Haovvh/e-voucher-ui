@@ -171,6 +171,7 @@ export default function PartnerPromotion () {
           <header className="jumbotron">
             <h1>Promotions </h1> 
           </header>
+          {!show && (
           <Card>
           <Row>
               <Col md={6}>
@@ -184,12 +185,12 @@ export default function PartnerPromotion () {
               />
               </Col>
               <Col  md={{ span: 3, offset: 15 }}>
-              {!show && (<Button  className='btn btn-success ' onClick={handleClickNew}>
+              <Button  className='btn btn-success ' onClick={handleClickNew}>
             New Promotion
-          </Button>)}
+          </Button>
               </Col>
             </Row>
-          </Card>
+          </Card>)}
           
           
           <PartnerNewPromotion id={promotionID} show={show}/>

@@ -26,17 +26,17 @@ import goongService from "../../services/goong.service";
 import CustomerPlayGame from "./customer.playgame";
 
 export default function CustomerPromotion () {
-    const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [promotionID, setPromotionID] = useState("");
     const [searchLocation, setSearchLocation] = useState("");
     const [searchTitle, setSearchTitle] = useState("");
-    const [search, setSearch] = useState("");
     const [promotions, setPromotions] = useState([]);
     const [tempPromotions, setTempPromotions] = useState([]);
     const [isPlayGame, setIsPlayGame] = useState(false)
-    
-    const [searchBySelect, setSearchBySelect] = useState("");
+    const [categories, setCategories] = useState([])
+
+    const [categoryId, setCategoryId] = useState("");
+
   const columns = [
     
     {
@@ -85,44 +85,37 @@ export default function CustomerPromotion () {
   const handleKeyDown = (e) => {
     
     if (e.key === 'Enter') {
-      const tempDataTitle = tempPromotions.filter(e => e.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-      if(tempDataTitle.length === 0) {
-        const tempDataStatus = tempPromotions.filter(e => e.Status.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-        setPromotions(tempDataStatus);
-      } else {
-        setPromotions(tempDataTitle)
-      }     
+           
     }
   }
-  const handleChangeSearch = (event) => {    
-    
-    setSearch(event.target.value)
+  const handleChangeSearchTitle = (event) => { 
+    setSearchTitle(event.target.value)
   }
 
-  const handleChangeSearchBySelect = (event) => {    
-    setSearchBySelect(event.target.value)
-  }
-  const handleChangeSearchLocation = () => {
+  const handleChangeCategory = (event) => {    
+    if(event.target.value === "0") {
+      setCategoryId("")
+    } else {
+      setCategoryId(event.target.value)
+    }
     
+  }
+  const handleChangeSearchLocation = (event) => {
+    setSearchLocation(event.target.value)
   }
 
   const handleClickSearch = () => {
-    switch(searchBySelect) {
-      case "title":
-        alert("title")
-        break;
-
-      case "category":
-        alert("category")
-        break;
-      case "location":
-        alert("location")
-        break;
-      
-      case "nearby":
-        alert("nearby")
-        break;
-    }
+    console.log(searchTitle, categoryId, searchLocation)
+    customerService.getAllPromotionByCustomer(searchTitle, categoryId, searchLocation).then(
+      response => {
+        if(response.data && response.data.success === true) {
+          const temp = response.data.data
+          console.log(temp)
+          setPromotions(temp)
+          
+        }
+      }
+    )
   }
   
   const handleClickJoin = (record) => {
@@ -139,7 +132,20 @@ export default function CustomerPromotion () {
             setPromotions(temp)            
           }
         }
-      )      
+      )  
+      customerService.getAllCategoryByCustomer().then(
+        response => {
+          if(response.data && response.data.success === true) {
+            const temp = response.data.data
+            temp.unshift({
+              id: 0,
+              type: "Vui lòng chọn"
+            })
+            console.log(temp)
+            setCategories(temp)
+          }
+        }
+      )    
       
     },[isLoad])
     return(
@@ -154,7 +160,7 @@ export default function CustomerPromotion () {
               <Col md={{ span: 4, offset: 0 }}>                
               <Input
                 value={searchTitle}
-                onChange={handleChangeSearch}
+                onChange={(event) => handleChangeSearchTitle(event)}
                 className="header-search"
                 placeholder="Search Title..."
                 prefix={<SearchOutlined />}
@@ -164,7 +170,6 @@ export default function CustomerPromotion () {
               <Input
                 value={searchLocation}
                 onChange={handleChangeSearchLocation}
-                onKeyDown={handleKeyDown}
                 className="header-search"
                 placeholder="Search Location..."
                 prefix={<SearchOutlined />}
@@ -173,13 +178,15 @@ export default function CustomerPromotion () {
               </Col>
               <Col md={{ span: 4, offset: 1 }}>
               <Form.Select 
-              onChange={handleChangeSearchBySelect}
+              value={categoryId}
+              onChange={handleChangeCategory}
               aria-label="Default select example">
-                <option>Category</option>
-                <option value="title">Title</option>
-                <option value="location">Location</option>
-                <option value="category">Category</option>
-                <option value="nearby">Near by</option>
+                {categories && Array.isArray(categories) && categories.map((option) => {
+                  return (<option key={option.id} value={option.id}>
+                    {option.type}                    
+                  </option>)
+                })}
+                
               </Form.Select>
               
               </Col>

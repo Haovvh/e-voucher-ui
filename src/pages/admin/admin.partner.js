@@ -33,7 +33,8 @@ export default function AdminPartner () {
     
     const [partners, setPartners] = useState([]);
     const [searchPartners, setSearchPartners] = useState([]);
-    
+    const [categories, setCategories] = useState([])
+    const [categoryId, setCategoryId] = useState(0);
 
   const [search, setSearch] = useState("");
   
@@ -127,6 +128,9 @@ export default function AdminPartner () {
   const handleClickNew = () => {
     setShow(true)
   }
+  const handleChangeCategory = (event) => {
+    setCategoryId(event.target.value)
+  }
 
   const onDeleteData = (record) => {
     
@@ -166,6 +170,7 @@ export default function AdminPartner () {
     setPassword(event.target.value)
   )
   const clearScreen = () => {
+    setCategoryId("");
     setName("");
     setEmail("");
     setAddress("");
@@ -197,9 +202,9 @@ export default function AdminPartner () {
   }
 
   const handleClickSave = () => { 
-    if(email && password && address && name) {
+    if(email && password && address && name && categoryId) {
       if(partnerId === "") {
-        AdminService.postPartnerByAdmin(email, password, address,name).then(
+        AdminService.postPartnerByAdmin(email, password, address,name, categoryId).then(
           response => {
             console.log(response.data)
             if(response.data && response.data.success === true ) {
@@ -215,7 +220,7 @@ export default function AdminPartner () {
         )
       } else {
         
-        AdminService.putPartnerByAdmin(partnerId, password, address, name).then(
+        AdminService.putPartnerByAdmin(partnerId, password, address, name, categoryId).then(
           response =>{
             if(response.data && response.data.success === true) {
               alert(notification.EDIT)
@@ -246,8 +251,11 @@ export default function AdminPartner () {
           setAddress(temp.address)
           setName(temp.name)
           setPartnerId(record.id)
+          setCategoryId(`${temp.categoryID}`)
+          console.log(temp.categoryID)
           setShow(true)
           setDisabled(true)
+          
         }
       }
     )
@@ -267,6 +275,15 @@ export default function AdminPartner () {
           
         }, error => {
           console.log(error)
+        }
+      )
+      AdminService.getAllCategoryByAdmin().then(
+        response => {
+          if(response.data && response.data.success === true) {
+            const temp = response.data.data
+            console.log(temp)
+            setCategories(temp)
+          }
         }
       )
     },[isLoad])
@@ -348,6 +365,19 @@ export default function AdminPartner () {
             onChange={handleChangeAddress}  
             />        
           </Form.Group>
+          <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>category </Form.Label>
+              <Form.Select value={categoryId}
+              onChange={(event) => handleChangeCategory(event)}
+              aria-label="Default select example">
+                
+                {categories && Array.isArray(categories) && categories.map((option) =>{
+                  return (
+                    <option key={option.id} value={option.id}>{option.type}</option>
+                  )
+                })}                
+              </Form.Select>
+              </Form.Group>
           <Form.Group className="mb-3" >
             <Form.Label>Password</Form.Label>
             <Form.Control 

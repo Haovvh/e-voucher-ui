@@ -16,16 +16,24 @@ const getVoucherIdByCustomer = (id ) =>(
     })
 );
 
-const putCustomerByCustomer = ( password, address, name, phoneNumber, lat, long ) =>(
-    axios.put(`${process.env.REACT_APP_API_URL}/customer`,{
-        id: header.getUserId(), password, address, name, phoneNumber, lat, long
+const putCustomerByCustomer = ( check, address, name, phoneNumber, lat, long ) =>(
+    axios.put(`${process.env.REACT_APP_API_URL}/customer/info`,{
+        id: header.getUserId(), check, address, name, phoneNumber, lat, long
     },{ 
         headers: header.authHeader() 
     })
 );
 
-const getAllPromotionByCustomer = (search = "", type = "", latest = true) =>(
-    axios.get(`${process.env.REACT_APP_API_URL}/customer/promotion?search=${search}&type=${type}&latest=${latest}`,
+const putChangePassByCustomer = ( check, password ) =>(
+    axios.put(`${process.env.REACT_APP_API_URL}/customer/password`,{
+        id: header.getUserId(), check, check, password 
+    },{ 
+        headers: header.authHeader() 
+    })
+);
+
+const getAllPromotionByCustomer = (search = "", type = "",  location ="", latest = true) =>(
+    axios.get(`${process.env.REACT_APP_API_URL}/customer/promotion?search=${search}&type=${type}&latest=${latest}&location=${location}`,
     { 
         headers: header.authHeader() 
     })
@@ -99,5 +107,6 @@ export default {
     putRewardByCustomer,
     postParticipationByCustomer,
     getPromotionIdByCustomer,
-    getVoucherIdByCustomer
+    getVoucherIdByCustomer,
+    putChangePassByCustomer
 }
