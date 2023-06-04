@@ -27,8 +27,7 @@ export default function AdminReport () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [promotionID, setPromotionID] = useState("");
-    const [statusCode, setStatusCode] = useState([{      
-    }]);
+    const [statusCode, setStatusCode] = useState([]);
     
     const [search, setSearch] = useState("");
     const [promotions, setPromotions] = useState([]);

@@ -27,16 +27,14 @@ export default function AdminPromotion () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [promotionID, setPromotionID] = useState("");
-    const [statusCode, setStatusCode] = useState([{      
-    }]);
+    const [statusCode, setStatusCode] = useState([]);
     
     const [search, setSearch] = useState("");
     const [promotions, setPromotions] = useState([]);
     const [tempPromotions, setTempPromotions] = useState([]);
     const [statusID, setStatusID] = useState("");    
     
-  const columns = [
-    
+  const columns = [    
     {
       title: "TITLE",
       dataIndex: "title",      
@@ -251,8 +249,7 @@ export default function AdminPromotion () {
               columns={columns}
               dataSource={promotions}
               pagination={true}
-              rowKey={(record) => { return record.id}}
-              
+              rowKey="id"              
               bordered
               className="ant-border-space"
             />

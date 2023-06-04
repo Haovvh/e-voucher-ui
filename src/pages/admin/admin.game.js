@@ -38,8 +38,6 @@ export default function AdminGame () {
       title: "Title",
       dataIndex: "title",
     }, 
-   
-    
     {
       title: "CreatedAt",
       dataIndex: "createdAt",
