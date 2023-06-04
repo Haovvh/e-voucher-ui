@@ -9,7 +9,9 @@ import {
   SearchOutlined,
   
 } from "@ant-design/icons";
-
+import { BsEye } from 'react-icons/bs';
+import { BsEyeSlash } from 'react-icons/bs';
+import { InputGroup } from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row'
 import Col from "react-bootstrap/Col";
@@ -34,22 +36,15 @@ export default function AdminCustomer () {
     const [tempDatas, setTempDatas] = useState([]);
     const [lat, setLat] = useState("");
     const [long, setLong] = useState("")
-    
+    const [showPass, setShowPass] = useState(false)
 
   const [search, setSearch] = useState("");
   
   const columns = [
-    {
-      title: "Id",
-      dataIndex: "id",        
-      width: "5%",
-      sorter: (a, b) => a.id - b.id,
-    },
-    
+        
     {
       title: "Email",
-      dataIndex: "email",       
-      sorter: (a, b) => a.email - b.email,   
+      dataIndex: "email",        
     },
     {
       title: "Name",
@@ -107,9 +102,7 @@ export default function AdminCustomer () {
     }
     
   ];
-  const handleEditStatus = (record) => {
-    alert(record.id)
-  }
+  
   const handleChangePhone = (event) => {
     setPhoneNumber(event.target.value)
   }
@@ -166,16 +159,27 @@ export default function AdminCustomer () {
   const handleKeyDown = (e) => {
     
     if (e.key === 'Enter') {
-      const tempdatas = tempDatas.filter(e => e.email.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-      if(tempdatas.length === 0) {
-        const temptempDatas = tempDatas.filter(e => e.address.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-        setDatas(temptempDatas);
+      const tempDataEmails = tempDatas.filter(e => e.email.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+      if(tempDataEmails.length === 0) {
+        const tempDataNames =  tempDatas.filter(e => e.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+        if (tempDataNames.length === 0 ) {
+          const temptempDatas = tempDatas.filter(e => e.address.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+          setDatas(temptempDatas);
+        } else {
+          setDatas(tempDataNames)
+        }
+        
       } else {
-        setDatas(tempdatas)
+        setDatas(tempDataEmails)
       }     
       
     }
   }
+
+  const handleshowPass = () =>{
+    setShowPass(!showPass)
+  }
+
   const handleKeyDownAddress = (e) => {
     
     if (e.key === 'Enter') {
@@ -306,7 +310,7 @@ export default function AdminCustomer () {
           
         <Modal show={show} onHide={handleClickClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Edit Partner</Modal.Title>
+          <Modal.Title>Customer</Modal.Title>
         </Modal.Header>
         <Modal.Body> 
           <Form.Group className="mb-3">
@@ -347,13 +351,17 @@ export default function AdminCustomer () {
           </Form.Group>
           <Form.Group className="mb-3" >
             <Form.Label>Password</Form.Label>
+            <InputGroup className="mb-3">
             <Form.Control 
             placeholder="Password"
-            type="password" 
+            type={!showPass ? "password" : "text"} 
             value={password}   
             onChange={(event) => {handleChangePass(event)}}  
-            />        
+            />     
+            <InputGroup.Text>{showPass ? <BsEye onClick={handleshowPass}/> : <BsEyeSlash onClick={handleshowPass}/>}</InputGroup.Text>
+            </InputGroup>   
           </Form.Group>
+          
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClickClose}>

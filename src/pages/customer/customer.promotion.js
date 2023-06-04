@@ -22,7 +22,6 @@ import Modal from 'react-bootstrap/Modal';
 import { EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import notification from "../../utils/notification";
 import customerService from "../../services/customer.service";
-import goongService from "../../services/goong.service";
 import CustomerPlayGame from "./customer.playgame";
 
 export default function CustomerPromotion () {
@@ -79,15 +78,11 @@ export default function CustomerPromotion () {
       }
     }
   ];
-  
-  
-  
-  const handleKeyDown = (e) => {
-    
-    if (e.key === 'Enter') {
-           
-    }
+
+  const handleClickNew = () => {
+
   }
+  
   const handleChangeSearchTitle = (event) => { 
     setSearchTitle(event.target.value)
   }
@@ -125,14 +120,22 @@ export default function CustomerPromotion () {
   } 
 
     useEffect(()=>{   
-      customerService.getAllPromotionByCustomer().then(
+      customerService.getCustomerIdByCustomer().then(
         response => {
           if(response.data && response.data.success === true) {
             const temp = response.data.data
-            setPromotions(temp)            
+            customerService.getAllPromotionNearByCustomer(temp.lat, temp.long).then(
+              response => {
+                if(response.data && response.data.success === true) {
+                  const temp = response.data.data
+                  setPromotions(temp)            
+                }
+              }
+            )
           }
         }
-      )  
+      )
+      
       customerService.getAllCategoryByCustomer().then(
         response => {
           if(response.data && response.data.success === true) {
@@ -182,7 +185,7 @@ export default function CustomerPromotion () {
               onChange={handleChangeCategory}
               aria-label="Default select example">
                 {categories && Array.isArray(categories) && categories.map((option) => {
-                  return (<option key={option.id} value={option.id}>
+                  return (<option key={option.id} value={option.type}>
                     {option.type}                    
                   </option>)
                 })}
@@ -193,6 +196,11 @@ export default function CustomerPromotion () {
               <Col md={{ span: 2, offset: 1 }}>
               <Button className="btn btn-success" onClick={handleClickSearch}>
                 Search
+              </Button>
+              </Col>
+              <Col md={{ span: 2, offset: 1 }}>
+              <Button className="btn btn-success" onClick={handleClickNew}>
+                Mới nhất
               </Button>
               </Col>
               

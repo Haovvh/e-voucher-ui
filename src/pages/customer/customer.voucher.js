@@ -30,8 +30,8 @@ export default function CustomerVoucher () {
     const [value, setValue] = useState("");
     const [datas, setDatas] = useState([]);
     const [tempDatas, setTempDatas] = useState([]);
-    
-
+    const [email, setEmail] = useState("");
+    const [rewardID, setRewardID] = useState("");
   const [search, setSearch] = useState("");
   
   const columns = [    
@@ -78,13 +78,7 @@ export default function CustomerVoucher () {
               onClick={() => {
                 onEditData(record);
               }}
-            />
-            <DeleteOutlined
-              onClick={() => {
-                onDeleteData(record);
-              }}
-              style={{ color: "red", marginLeft: 12 }}
-            />
+            />            
           </>
         );
       },    
@@ -93,43 +87,9 @@ export default function CustomerVoucher () {
     
   ];
   
-  const handleChangeValue = (event) => {
-    setValue(event.target.value)
-  }
-  
-
-  const onDeleteData = (record) => {
-    
-    const id = record.id
-    
-    
-    if(window.confirm(notification.CONFIRM_DELETE)){
-      
-      AdminService.deleteVoucherIdByAdmin(id).then(
-        response => {
-          console.log(response.data)
-          if(response.data && response.data.success) {
-            alert(notification.DELETE);
-            setIsLoad(!isLoad);
-          }
-          
-        }, error => {
-          console.log(error)
-        }
-      )     
-    }
-    
-  };
-
-  
-  const handleChangeTitle = (event) => (
-    setTitle(event.target.value)
+  const handleChangeEmail = (event) => (
+    setEmail(event.target.value)
   )
-
-  const handleChangeDescription = (event) => (
-    setDescription(event.target.value)
-  )
-
   const clearScreen = () => {
     setTitle("");
     setDescription("");
@@ -140,9 +100,9 @@ export default function CustomerVoucher () {
   const handleKeyDown = (e) => {
     
     if (e.key === 'Enter') {
-      const tempdatas = tempDatas.filter(e => e.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+      const tempdatas = tempDatas.filter(e => e.Voucher.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
       if(tempdatas.length === 0) {
-        const temptempDatas = tempDatas.filter(e => e.description.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+        const temptempDatas = tempDatas.filter(e => e.Voucher.description.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
         setDatas(temptempDatas);
       } else {
         setDatas(tempdatas)
@@ -156,43 +116,27 @@ export default function CustomerVoucher () {
   };
   const handleChangeSearch = (event) => {        
     setSearch(event.target.value)
-  }
-  const handleClickNew = () => {
-    setShow(true)
-    clearScreen();
-  }
+  }  
 
   const handleClickSave = () => { 
-    if(title && description && parseFloat(value) > 0 ) {
-        if(userId && userId !== "") {
-            AdminService.putVoucherByAdmin(userId,title, description, value).then(
-                response => {
-                    if(response.data && response.data.success === true) {
-                        alert(notification.EDIT)
-                        setShow(false);
-                        setIsLoad(!isLoad)
-                        clearScreen();
-                    }
-                }, error => {
-                    alert(notification.ERROR)
-                }
-            )
-        } else {
-            AdminService.postVoucherByAdmin(title, description, value).then(
-                response => {
-                    if(response.data && response.data.success === true) {
-                        alert(notification.CREATE)
-                        setShow(false);
-                        setIsLoad(!isLoad)
-                        clearScreen();
-                    }
-                }, error => {
-                    alert(notification.ERROR)
-                }
-            )
-        } 
-        
-      
+    if (email && rewardID) {
+      customerService.putRewardByCustomer(email,rewardID).then(
+        response => {
+          console.log(response.data)
+          if(response.data && response.data.success === true) {
+            console.log(response.data)
+            setEmail("")
+            setRewardID("");
+            setShow(false)
+            setIsLoad(!isLoad)
+          }
+        }, error =>{
+          if(error.response && error.response.status === 404 && error.response.data && error.response.data.success === false) {
+            alert(notification.ERROR_EMAIL)
+          }
+          console.log(error.response)
+        }
+      )
     } else {
       alert(notification.INPUT);
     }    
@@ -203,23 +147,8 @@ export default function CustomerVoucher () {
     clearScreen();
   }
   const onEditData = (record) => { 
-    AdminService.getVoucherIdByAdmin(record.id).then(
-      response => {
-        if(response.data && response.data.success) {
-          console.log(response.data.data)
-          const temp = response.data.data
-          setTitle(temp.title)
-          setDescription(temp.description)
-          setValue(temp.value)
-          
-          setUserId(record.id)
-          setShow(true)
-          
-        }
-      }
-    )
-    
-    
+   setRewardID(record.id);
+   setShow(true)
   };
     useEffect(()=>{   
       customerService.getAllRewardByCustomer().then(
@@ -280,39 +209,18 @@ export default function CustomerVoucher () {
           
         <Modal show={show} onHide={handleClickClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Voucher</Modal.Title>
+          <Modal.Title>Email</Modal.Title>
         </Modal.Header>
         <Modal.Body> 
           
           <Form.Group className="mb-3" >
-            <Form.Label>Title</Form.Label>
-            <Form.Control placeholder="Title" 
-            value={title}
+            <Form.Label>Email</Form.Label>
+            <Form.Control placeholder="Email" 
+            value={email}
             required
-            onChange={handleChangeTitle} 
+            onChange={handleChangeEmail} 
             />        
-          </Form.Group>
-          <Form.Group className="mb-3" >
-            <Form.Label>Description</Form.Label>
-            <Form.Control 
-            placeholder="Description" 
-            
-            value={description}   
-            required
-            onChange={handleChangeDescription}  
-            />        
-          </Form.Group>
-          <Form.Group className="mb-3" >
-            <Form.Label>Value</Form.Label>
-            <Form.Control 
-            placeholder="Value" 
-            type="number"
-            value={value}   
-            required
-            onChange={handleChangeValue}  
-            />       
-           
-          </Form.Group>
+          </Form.Group>          
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClickClose}>

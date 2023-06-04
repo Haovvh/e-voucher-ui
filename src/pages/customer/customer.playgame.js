@@ -25,13 +25,20 @@ import notification from '../../utils/notification';
 export default function CustomerPlayGame (props) {
     const[promotionID, setPromotionID] = useState("");
     const [vouchers, setVouchers] = useState([]);
-    const [voucherID, setVoucherID] = useState("")
     const [showVoucher, setShowVoucher] = useState(false);
     const [voucherListId, setVoucherListId] = useState([])
     const voucherListID = [];
     const handleClickSuccess = () => {
         const temp = Math.floor(Math.random()*voucherListId.length)
         const id = voucherListId[temp];
+        customerService.postParticipationByCustomer(promotionID).then(
+            response => {
+
+                if(response.data && response.data.success) {
+                    console.log(response.data)
+                }
+            }
+        )
         customerService.postRewardByCustomer(promotionID,id).then(
             response => {
                 if(response.data && response.data.success === true) {

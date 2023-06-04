@@ -29,13 +29,7 @@ export default function PartnerGame () {
 
   const [search, setSearch] = useState("");
   
-  const columns = [
-    {
-      title: "Id",
-      dataIndex: "id",        
-      width: "5%",
-      sorter: (a, b) => a.id - b.id,
-    },    
+  const columns = [ 
     
     {
       title: "Title",

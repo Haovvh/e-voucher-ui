@@ -33,13 +33,7 @@ export default function AdminGame () {
   const [search, setSearch] = useState("");
   
   const columns = [
-    {
-      title: "Id",
-      dataIndex: "id",        
-      width: "5%",
-      sorter: (a, b) => a.id - b.id,
-    },    
-    
+   
     {
       title: "Title",
       dataIndex: "title",

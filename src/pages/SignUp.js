@@ -6,7 +6,8 @@ import {
   Menu,   
   Typography
 } from "antd";
-import { BiHide } from 'react-icons/bi';
+import { BsEye } from 'react-icons/bs';
+import { BsEyeSlash } from 'react-icons/bs';
 import {Form, Row, Col, Card, Button, InputGroup} from 'react-bootstrap'
 import signinbg from "../assets/images/voucher--scaled.jpeg";
 import Service from "../services/auth.service"
@@ -180,7 +181,8 @@ export default function SignUp () {
                       type={!showPass ? "password" : "text"} 
                       value={password}
                       onChange = {(event) =>{handleChangePassword(event)}} />
-                  <InputGroup.Text><BiHide onClick={handleshowPass}/></InputGroup.Text>
+                      <InputGroup.Text>{showPass ? <BsEye onClick={handleshowPass}/> : <BsEyeSlash onClick={handleshowPass}/>}</InputGroup.Text>
+                  
                   </InputGroup>                  
                  
                 </Col>
@@ -195,7 +197,8 @@ export default function SignUp () {
                     type={!showConfirmPass ? "password" : "text"}
                     value={confirmPassword}
                     onChange = {(event) =>{handleChangeConfirmPassword(event)}} />
-                <InputGroup.Text><BiHide onClick={handleshowConfirmPass}/></InputGroup.Text>
+                    <InputGroup.Text>{showConfirmPass ? <BsEye onClick={handleshowConfirmPass}/> : <BsEyeSlash onClick={handleshowConfirmPass}/>}</InputGroup.Text>
+                
                 </InputGroup>
                 
                

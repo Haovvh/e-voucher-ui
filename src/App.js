@@ -11,6 +11,7 @@ import PartnerStore from "./pages/partner/partner.store";
 import PartnerGame from "./pages/partner/partner.game";
 import PartnerVoucher from "./pages/partner/partner.voucher";
 import PartnerProfile from "./pages/partner/partner.profile";
+import PartnerReport from "./pages/partner/partner.report";
 
 import AdminPromotion from "./pages/admin/admin.promotion";
 import AdminPartner from "./pages/admin/admin.partner";
@@ -18,6 +19,7 @@ import AdminCustomer from "./pages/admin/admin.customer";
 import AdminGame from "./pages/admin/admin.game";
 import AdminVoucher from "./pages/admin/admin.voucher";
 import AdminProfile from "./pages/admin/admin.profile";
+import AdminReport from "./pages/admin/admin.report";
 
 import CustomerPromotion from "./pages/customer/customer.promotion";
 import CustomerProfile from "./pages/customer/customer.profile";
@@ -51,6 +53,7 @@ function App() {
           <Route exact path="/partnerstore" component={isPartner ? PartnerStore : NotFound} />
           <Route exact path="/partnergame" component={isPartner ? PartnerGame : NotFound} />
           <Route exact path="/partnervoucher" component={isPartner ? PartnerVoucher : NotFound} />
+          <Route exact path="/partnerreport" component={isPartner ? PartnerReport : NotFound} />
           <Route exact path="/partnerprofile" component={isPartner ? PartnerProfile : NotFound} />
 
           <Route exact path="/adminpromotion" component={isAdmin ? AdminPromotion : NotFound} />
@@ -59,6 +62,7 @@ function App() {
           <Route exact path="/admingame" component={isAdmin ? AdminGame : NotFound} />
           <Route exact path="/adminvoucher" component={isAdmin ? AdminVoucher : NotFound} />
           <Route exact path="/adminprofile" component={isAdmin ? AdminProfile : NotFound} />
+          <Route exact path="/adminreport" component={isAdmin ? AdminReport : NotFound} />
 
           <Route exact path="/customerpromotion" component={isCustomer ? CustomerPromotion : NotFound} />
           <Route exact path="/customerprofile" component={isCustomer ? CustomerProfile : NotFound} />

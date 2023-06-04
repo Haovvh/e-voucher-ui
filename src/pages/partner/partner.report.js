@@ -20,10 +20,9 @@ import { EditOutlined, DeleteOutlined, SearchOutlined, FolderViewOutlined } from
 
 import partnerService from "../../services/partner.service";
 
-import PartnerNewPromotion from "./partner.newpromotion";
 import header from "../../services/header.service";
 
-export default function PartnerPromotion () {
+export default function PartnerReport () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [promotionID, setPromotionID] = useState("");
@@ -190,7 +189,6 @@ export default function PartnerPromotion () {
           <header className="jumbotron">
             <h1>Promotions </h1> 
           </header>
-          {!show && (
           <Card>
           <Row>
               <Col md={6}>
@@ -203,17 +201,10 @@ export default function PartnerPromotion () {
                 prefix={<SearchOutlined />}
               />
               </Col>
-              <Col  md={{ span: 3, offset: 15 }}>
-              <Button  className='btn btn-success ' onClick={handleClickNew}>
-            New
-          </Button>
-              </Col>
+              
             </Row>
-          </Card>)}
+          </Card>
           
-          
-          <PartnerNewPromotion id={promotionID} show={show} view={readOnly}/>
-          {show ? <></> : 
           <Card
           bordered={false}
           className="criclebox tablespace mb-24"
@@ -232,9 +223,7 @@ export default function PartnerPromotion () {
               className="ant-border-space"
             />
           </div>
-        </Card>
-          }
-          
+        </Card>          
         </div>
         </React.Fragment>
     )

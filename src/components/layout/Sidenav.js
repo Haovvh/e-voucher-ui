@@ -224,6 +224,21 @@ function Sidenav({ color }) {
           </NavLink>
         </Menu.Item>
       }
+      { isAdmin &&       
+        <Menu.Item key="15">
+          <NavLink to="/adminreport">
+            <span
+              className="icon"
+              style={{
+                background: page === "adminreport" ? color : "",
+              }}
+            >
+              {tables}
+            </span>
+            <span className="label">Report</span>
+          </NavLink>
+        </Menu.Item>
+      }
       { isPartner &&       
         <Menu.Item key="21">
           <NavLink to="/partnerpromotion">
@@ -281,6 +296,21 @@ function Sidenav({ color }) {
               {tables}
             </span>
             <span className="label">Game</span>
+          </NavLink>
+        </Menu.Item>
+      }
+      { isPartner &&       
+        <Menu.Item key="25">
+          <NavLink to="/partnerreport">
+            <span
+              className="icon"
+              style={{
+                background: page === "partnerreport" ? color : "",
+              }}
+            >
+              {tables}
+            </span>
+            <span className="label">Report</span>
           </NavLink>
         </Menu.Item>
       }

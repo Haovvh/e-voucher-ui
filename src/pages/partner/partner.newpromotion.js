@@ -40,6 +40,7 @@ export default function PartnerNewPromotion(props) {
       description: "",
       value: ""
     });
+    const [readOnly, setReadOnly] = useState(false);
     
     const [games, setGames] = useState([]);
     const [gameID, setGameID] = useState(0)
@@ -89,6 +90,9 @@ export default function PartnerNewPromotion(props) {
         title: "Actions",
         key: 'action',      
         render: (record) => {
+          if(readOnly === true ) {
+            return <></>
+          }
           return (
             <>
             <EditOutlined
@@ -318,7 +322,7 @@ export default function PartnerNewPromotion(props) {
                     quantity: option.quantity
                   })
               })
-              
+              setReadOnly(props.view)
               setVouchers(tempVouchers);
               const temp = response.data.data
               setPromotionID(temp.id)
@@ -354,14 +358,18 @@ export default function PartnerNewPromotion(props) {
     <Container>
       <Row>
         <Col>
+        {(readOnly=== true) ? <></> : 
         <Button className='btn btn-primary' onClick={handleshow}>
           Add Voucher
         </Button>
+        }
         </Col>
         <Col>
+        {(readOnly=== true) ? <></> : 
         <Button className='btn btn-success justify-content-end' onClick={handleClickSavePromotion}>
           Save
         </Button>
+        }
         </Col>
       </Row>
     </Container>
@@ -386,6 +394,7 @@ export default function PartnerNewPromotion(props) {
       <Row>
         <Col>
         <Input 
+          readOnly={readOnly}
           placeholder="Title" 
           value={promotion.title}
           onChange = {(event) =>{handleChangeTitle(event)}}
@@ -393,6 +402,7 @@ export default function PartnerNewPromotion(props) {
         </Col>
         <Col>
         <Input 
+            readOnly={readOnly}
             placeholder="Description" 
             value={promotion.description}
             onChange = {(event) =>{handleChangeDescription(event)}}
@@ -400,7 +410,7 @@ export default function PartnerNewPromotion(props) {
         </Col>
         <Col>
         <Input 
-            placeholder="Value" 
+            readOnly={readOnly}
             type='date'
             value={promotion.start}    
             onChange = {(event) =>{handleChangeStart(event)}}        
@@ -409,7 +419,7 @@ export default function PartnerNewPromotion(props) {
         </Col>
         <Col>
         <Input 
-            placeholder="Value" 
+            readOnly={readOnly}
             type='date'
             value={promotion.end}  
             onChange = {(event) =>{handleChangeEnd(event)}}          
@@ -418,6 +428,7 @@ export default function PartnerNewPromotion(props) {
         <Col>
         
         <Form.Control
+        readOnly={readOnly}
         as="select" 
         value={gameID}
         onChange={handleChangeGame}

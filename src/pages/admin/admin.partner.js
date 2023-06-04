@@ -9,7 +9,9 @@ import {
   SearchOutlined,
   
 } from "@ant-design/icons";
-
+import { BsEye } from 'react-icons/bs';
+import { BsEyeSlash } from 'react-icons/bs';
+import { InputGroup } from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row'
 import Col from "react-bootstrap/Col";
@@ -34,22 +36,17 @@ export default function AdminPartner () {
     const [partners, setPartners] = useState([]);
     const [searchPartners, setSearchPartners] = useState([]);
     const [categories, setCategories] = useState([])
-    const [categoryId, setCategoryId] = useState(0);
+    const [categoryId, setCategoryId] = useState("0");
+    const [showPass, setShowPass] = useState(false)
 
   const [search, setSearch] = useState("");
   
   const columns = [
-    {
-      title: "IdPartner",
-      dataIndex: "id",        
-      width: "5%",
-      sorter: (a, b) => a.id - b.id,
-    },
-    
+        
     {
       title: "Email",
       dataIndex: "email",       
-      sorter: (a, b) => a.email - b.email,   
+      
     },
     {
       title: "Name",
@@ -97,10 +94,8 @@ export default function AdminPartner () {
             />
           </>
         );
-      },    
-  
+      },  
     }
-    
   ];
 
   const handleKeyDownAddress = (e) => {
@@ -121,10 +116,7 @@ export default function AdminPartner () {
       )
     }
   }
-  const handleEditStatus = (record) => {
-    alert(record.id)
-  }
-
+  
   const handleClickNew = () => {
     setShow(true)
   }
@@ -170,7 +162,7 @@ export default function AdminPartner () {
     setPassword(event.target.value)
   )
   const clearScreen = () => {
-    setCategoryId("");
+    setCategoryId("0");
     setName("");
     setEmail("");
     setAddress("");
@@ -181,15 +173,19 @@ export default function AdminPartner () {
   const handleKeyDown = (e) => {
     
     if (e.key === 'Enter') {
-      const tempPartners = searchPartners.filter(e => e.email.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-      if(tempPartners.length === 0) {
-        const tempSearchPartners = searchPartners.filter(e => e.address.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-        setPartners(tempSearchPartners);
+      const tempPartnerEmails = searchPartners.filter(e => e.email.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+      if(tempPartnerEmails.length === 0) {
+        const tempPartnerNames = searchPartners.filter(e => e.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+        if (tempPartnerNames.length === 0) {
+          const tempSearchPartners = searchPartners.filter(e => e.address.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+          setPartners(tempSearchPartners);
+        } else {
+          setPartners(tempPartnerNames)
+        }
+        
       } else {
-        setPartners(tempPartners)
+        setPartners(tempPartnerEmails)
       }
-      
-      
     }
   }
 
@@ -202,7 +198,7 @@ export default function AdminPartner () {
   }
 
   const handleClickSave = () => { 
-    if(email && password && address && name && categoryId) {
+    if(email && password && address && name && categoryId !== "0") {
       if(partnerId === "") {
         AdminService.postPartnerByAdmin(email, password, address,name, categoryId).then(
           response => {
@@ -216,6 +212,7 @@ export default function AdminPartner () {
             
           }, error => {
             console.log(error)
+            alert(notification.ERROR_INPUT)
           }
         )
       } else {
@@ -228,6 +225,9 @@ export default function AdminPartner () {
               setIsLoad(!isLoad)
               clearScreen();
             }            
+          } , error => {
+            console.log(error)
+            alert(notification.ERROR_INPUT)
           }
         )
       }
@@ -235,6 +235,9 @@ export default function AdminPartner () {
     } else {
       alert(notification.INPUT);
     }    
+  }
+  const handleshowPass = () =>{
+    setShowPass(!showPass)
   }
   
   const handleClickClose = () => {
@@ -252,7 +255,7 @@ export default function AdminPartner () {
           setName(temp.name)
           setPartnerId(record.id)
           setCategoryId(`${temp.categoryID}`)
-          console.log(temp.categoryID)
+          
           setShow(true)
           setDisabled(true)
           
@@ -267,23 +270,30 @@ export default function AdminPartner () {
       AdminService.getAllPartnerByAdmin().then(
         response => {
           if (response.data && response.data.success) {
-                  
-            console.log(response.data.data)
-            setPartners(response.data.data)
-            setSearchPartners(response.data.data)
+            const temp = response.data.data;
+            console.log(temp)
+            setPartners(temp)
+            setSearchPartners(temp)
           }
           
         }, error => {
           console.log(error)
+          alert(notification.ERROR_SERVER)
         }
       )
       AdminService.getAllCategoryByAdmin().then(
         response => {
           if(response.data && response.data.success === true) {
             const temp = response.data.data
-            console.log(temp)
+            temp.unshift({
+              id: 0,
+              type: "Vui lòng chọn"
+            })
             setCategories(temp)
           }
+        }, error => {
+          console.log(error)
+          alert(notification.ERROR_SERVER)
         }
       )
     },[isLoad])
@@ -366,7 +376,7 @@ export default function AdminPartner () {
             />        
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicPassword">
-          <Form.Label>category </Form.Label>
+          <Form.Label>Category </Form.Label>
               <Form.Select value={categoryId}
               onChange={(event) => handleChangeCategory(event)}
               aria-label="Default select example">
@@ -380,12 +390,15 @@ export default function AdminPartner () {
               </Form.Group>
           <Form.Group className="mb-3" >
             <Form.Label>Password</Form.Label>
+            <InputGroup className="mb-3">
             <Form.Control 
             placeholder="Password"
-            type="password" 
+            type={!showPass ? "password" : "text"} 
             value={password}   
             onChange={(event) => {handleChangePass(event)}}  
-            />        
+            />      
+            <InputGroup.Text>{showPass ? <BsEye onClick={handleshowPass}/> : <BsEyeSlash onClick={handleshowPass}/>}</InputGroup.Text>
+            </InputGroup>  
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>

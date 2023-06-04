@@ -26,7 +26,7 @@ const putCustomerByCustomer = ( check, address, name, phoneNumber, lat, long ) =
 
 const putChangePassByCustomer = ( check, password ) =>(
     axios.put(`${process.env.REACT_APP_API_URL}/customer/password`,{
-        id: header.getUserId(), check, check, password 
+        id: header.getUserId(), check,  password 
     },{ 
         headers: header.authHeader() 
     })
@@ -53,18 +53,14 @@ const getAllPromotionNearByCustomer = ( lat = "", long = "") =>(
         headers: header.authHeader() 
     })
 );
-const getAllPromotionLocationByCustomer = ( search) =>(
-    axios.get(`${process.env.REACT_APP_API_URL}/customer/location?search=${search}`,
-    { 
-        headers: header.authHeader() 
-    })
-);
+
 const getAllCategoryByCustomer = ( ) =>(
     axios.get(`${process.env.REACT_APP_API_URL}/customer/category`,
     { 
         headers: header.authHeader() 
     })
 );
+
 const getAllRewardByCustomer = (id =header.getUserId() ) =>(
     axios.get(`${process.env.REACT_APP_API_URL}/customer/reward?id=${id}`,
     { 
@@ -79,28 +75,28 @@ const postRewardByCustomer = ( promotionID, voucherID, customerID = header.getUs
         headers: header.authHeader() 
     })
 );
+
 const putRewardByCustomer = (email, rewardID  ) =>(
-    axios.post(`${process.env.REACT_APP_API_URL}/customer/reward`, {
+    axios.put(`${process.env.REACT_APP_API_URL}/customer/reward`, {
         email, rewardID
     }, { 
         headers: header.authHeader() 
     })
 );
-const postParticipationByCustomer = (customerId, promotionID  ) =>(
+
+const postParticipationByCustomer = ( promotionID  ) =>(
     axios.post(`${process.env.REACT_APP_API_URL}/customer/join`, {
-        customerId, promotionID
+        customerID: header.getUserId(), promotionID
     }, { 
         headers: header.authHeader() 
     })
 );
 
-
-export default {
+const customerService = {
     getCustomerIdByCustomer,
     getAllPromotionByCustomer,
     putCustomerByCustomer,
     getAllPromotionNearByCustomer,
-    getAllPromotionLocationByCustomer,
     getAllCategoryByCustomer,
     getAllRewardByCustomer,
     postRewardByCustomer,
@@ -110,3 +106,5 @@ export default {
     getVoucherIdByCustomer,
     putChangePassByCustomer
 }
+
+export default customerService

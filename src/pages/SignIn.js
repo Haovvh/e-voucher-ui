@@ -9,6 +9,9 @@ import {
   Typography,  
   
 } from "antd";
+import { BsEye } from 'react-icons/bs';
+import { BsEyeSlash } from 'react-icons/bs';
+import { InputGroup } from "react-bootstrap";
 import {Form, Row, Col, Card, Button} from 'react-bootstrap'
 import signinbg from "../assets/images/img-signin.jpg";
 import Service from "../services/auth.service"
@@ -21,7 +24,8 @@ const { Header, Footer, Content } = Layout;
 export default function SignIn () {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const roleUser = ["customer", "partner", "admin"];
+
+  const [showPass, setShowPass] = useState(false)
   const [role, setRole] = useState("");
 
     const handleChangeEmail = (event) =>{
@@ -34,8 +38,12 @@ export default function SignIn () {
   const handleChangeRole = (event) =>{
     setRole(event.target.value);
   }
+
+  const handleshowPass = () =>{
+    setShowPass(!showPass)
+  }
   const handleOnClick = () =>{
-    alert(`${email} ${password} ${role}`)
+    
     if(email && password && role){
       
       Service.Login(email, password, role).then(
@@ -54,7 +62,7 @@ export default function SignIn () {
         }
       )
     } else {
-      alert(notification.ERROR)
+      alert(notification.INPUT)
     }
   }
   useEffect ( () => {
@@ -88,9 +96,15 @@ export default function SignIn () {
               </Form.Group>
               <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" value={password}
+                <InputGroup className="mb-3">
+                <Form.Control 
+                type={!showPass ? "password" : "text"} 
+                placeholder="Password" value={password}
                   onChange = {(event) =>{handleChangePassword(event)}} />
+                <InputGroup.Text>{showPass ? <BsEye onClick={handleshowPass}/> : <BsEyeSlash onClick={handleshowPass}/>}</InputGroup.Text>
+                </InputGroup>
               </Form.Group>
+              
               <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Role </Form.Label>
               <Form.Select 

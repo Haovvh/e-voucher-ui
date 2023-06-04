@@ -13,32 +13,34 @@ import {
   Space,
   Tag,  
   Typography,
-  Form,
-  Input
+  
+  Input,
+  Select
 } from "antd";
-import { EditOutlined, DeleteOutlined, SearchOutlined, FolderViewOutlined } from "@ant-design/icons";
+import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
+import { EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import notification from "../../utils/notification";
+import AdminService from "../../services/admin.service";
 
-import partnerService from "../../services/partner.service";
-
-import PartnerNewPromotion from "./partner.newpromotion";
-import header from "../../services/header.service";
-
-export default function PartnerPromotion () {
+export default function AdminReport () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [promotionID, setPromotionID] = useState("");
-    const handleClickNew = () => {
-      setShow(true)
-    }
+    const [statusCode, setStatusCode] = useState([{      
+    }]);
+    
+    const [search, setSearch] = useState("");
     const [promotions, setPromotions] = useState([]);
     const [tempPromotions, setTempPromotions] = useState([]);
-    const [search, setSearch] = useState("");
-    const [readOnly, setReadOnly] = useState(false);
+    const [statusID, setStatusID] = useState("");    
     
   const columns = [
-        {
+    
+    {
       title: "TITLE",
       dataIndex: "title",      
+     
     },
     {
       title: "DESCRIPTION",
@@ -48,6 +50,9 @@ export default function PartnerPromotion () {
     {
       title: "Game",
       dataIndex: "Game",
+      render: (text, record) => (
+        <p>{record.Game.title}</p>
+       ),    
       
     },
     {
@@ -76,63 +81,82 @@ export default function PartnerPromotion () {
           (<Button className="btn btn-warning" onClick={()=> handleEditStatus(record)}> 
         {record.Status}
       </Button>)}
-      }
+      }   
       
     },
     {
       title: "Actions",
       key: 'action',      
       render: (record) => {
-        if(record.Status === 'Pending') {
-          return (
-            <>
-              <EditOutlined
-                onClick={() => {
-                  onEditData(record);
-                }}
-              />
-              <DeleteOutlined
-                onClick={() => {
-                  onDeleteData(record);
-                }}
-                style={{ color: "red", marginLeft: 12 }}
-              />
-            </>
-          );
-        } else {
-          return (
-            <>
-              <FolderViewOutlined
-                onClick={() => {
-                  onViewData(record);
-                }}
-              />              
-            </>
-          );
-        }
-        
+        return (
+          <>
+            <EditOutlined
+              onClick={() => {
+                onEditData(record);
+              }}
+            />
+            <DeleteOutlined
+              onClick={() => {
+                onDeleteData(record);
+              }}
+              style={{ color: "red", marginLeft: 12 }}
+            />
+          </>
+        );
       },    
   
     }
     
   ];
+  const option =  statusCode.map((option) => {
+    return(
+      <option key={option.id} value={option.id}>
+          {option.state}
+      </option>
+    )
+  })
 
+  const handleClickSave = () => { 
+    
+    AdminService.putStatusPromotionByAdmin(promotionID, statusID).then(
+      response => {
+        if(response.data && response.data.success === true) {
+          alert(notification.EDIT)
+          setShow(false);
+          setPromotionID("")
+          setStatusID("");
+          setIsLoad(!isLoad)
+        }
+      }
+    )
+  }
+  const handleClickClose = () => { 
+    setShow(false)
+    setStatusID("")
+  }
+  const handleChangeStatus = (event) => { 
+    setStatusID(event.target.value)
+  }
   const handleKeyDown = (e) => {
     
     if (e.key === 'Enter') {
       const tempDataTitle = tempPromotions.filter(e => e.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
       if(tempDataTitle.length === 0) {
-        const tempDataDescription = tempPromotions.filter(e => e.description.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-        setPromotions(tempDataDescription);
+        const tempDataStatus = tempPromotions.filter(e => e.Status.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+        setPromotions(tempDataStatus);
       } else {
         setPromotions(tempDataTitle)
-      }
-      
-      
+      }     
     }
+  }
+  const handleChangeSearch = (event) => {    
+    
+    setSearch(event.target.value)
   }
   
   const handleEditStatus = (record) => {
+    setPromotionID(record.id)
+    setShow(true)
     
   } 
 
@@ -141,11 +165,11 @@ export default function PartnerPromotion () {
     const id = record.id
     const title = record.title;
     
-    if(window.confirm(`Are you sure you want to delete this ${id} ${title}}`)){
-      partnerService.deletePromotion(id).then(
+    if(window.confirm(notification.CONFIRM_DELETE)){
+      AdminService.deletePromotionByAdmin(id).then(
         response => {
           if(response.data && response.data.success) {
-            alert("Delete success");
+            alert(notification.DELETE);
             setIsLoad(!isLoad);
           }
           
@@ -155,34 +179,44 @@ export default function PartnerPromotion () {
       )     
     }    
   };
-  const handleChangeSearch = (event) => {    
-    
-    setSearch(event.target.value)
-  }
 
   
   const onEditData = (record) => { 
+
     setPromotionID(record.id)
-    setShow(true)    
-  };
-  const onViewData = (record) => { 
-    setPromotionID(record.id)
-    setShow(true)    
-    setReadOnly(true)
+    setShow(true)
+    
   };
     useEffect(()=>{   
-      partnerService.getAllPromotionByPartner(header.getUserId()).then(
+      AdminService.getAllStatusByAdmin().then(
+        response => {
+          if(response.data && response.data.success === true) {
+            const temp = response.data.data
+            temp.unshift({
+              id:0,
+              state: "Vui lòng chọn trạng thái"
+            })
+            console.log(temp)
+            setStatusCode(temp)
+            
+          }
+        }
+      )
+      AdminService.getAllPromotionByAdminToReport().then(
         response => {
           console.log(response.data)
-          if (response.data && response.data.success) {                 
-            setTempPromotions(response.data.data)
+          if (response.data && response.data.success) {
+            
             setPromotions(response.data.data)
+            setTempPromotions(response.data.data)
           }
           
         }, error => {
           console.log(error)
         }
       )
+      
+      
     },[isLoad])
     return(
         <React.Fragment>
@@ -190,7 +224,6 @@ export default function PartnerPromotion () {
           <header className="jumbotron">
             <h1>Promotions </h1> 
           </header>
-          {!show && (
           <Card>
           <Row>
               <Col md={6}>
@@ -203,22 +236,15 @@ export default function PartnerPromotion () {
                 prefix={<SearchOutlined />}
               />
               </Col>
-              <Col  md={{ span: 3, offset: 15 }}>
-              <Button  className='btn btn-success ' onClick={handleClickNew}>
-            New
-          </Button>
-              </Col>
+              
             </Row>
-          </Card>)}
+          </Card>
           
           
-          <PartnerNewPromotion id={promotionID} show={show} view={readOnly}/>
-          {show ? <></> : 
           <Card
           bordered={false}
           className="criclebox tablespace mb-24"
-          
-          
+                    
           >
             <div className="table-responsive">
             
@@ -233,8 +259,31 @@ export default function PartnerPromotion () {
             />
           </div>
         </Card>
-          }
-          
+        <Modal show={show} onHide={handleClickClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body> 
+        <label>Voucher</label>
+        <Form.Control
+        as="select" 
+        value={statusID}
+        onChange={handleChangeStatus}
+        >
+          {option}
+      
+      </Form.Control>
+                  
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClickClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleClickSave}>
+            Save 
+          </Button>
+        </Modal.Footer>
+      </Modal>
         </div>
         </React.Fragment>
     )

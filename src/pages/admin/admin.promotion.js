@@ -27,8 +27,7 @@ export default function AdminPromotion () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [promotionID, setPromotionID] = useState("");
-    const [statusCode, setStatusCode] = useState([{
-      
+    const [statusCode, setStatusCode] = useState([{      
     }]);
     
     const [search, setSearch] = useState("");
@@ -37,12 +36,7 @@ export default function AdminPromotion () {
     const [statusID, setStatusID] = useState("");    
     
   const columns = [
-    {
-      title: "IdPromotion",
-      dataIndex: "id",        
-      width: "5%",
-      
-    },
+    
     {
       title: "TITLE",
       dataIndex: "title",      
@@ -87,7 +81,7 @@ export default function AdminPromotion () {
           (<Button className="btn btn-warning" onClick={()=> handleEditStatus(record)}> 
         {record.Status}
       </Button>)}
-        }   
+      }   
       
     },
     {
@@ -212,7 +206,6 @@ export default function AdminPromotion () {
         response => {
           console.log(response.data)
           if (response.data && response.data.success) {
-            setIsLoad(false) 
             setPromotions(response.data.data)
             setTempPromotions(response.data.data)
           }

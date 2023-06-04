@@ -19,6 +19,12 @@ const getAllPromotionByPartner = (id = header.getUserId()) => (
    })
 );
 
+const getAllPromotionByPartnerToReport = (id = header.getUserId()) => (
+    axios.get(`${process.env.REACT_APP_API_URL}/partner/promotion?id=${id}/statistic`, { 
+       headers: header.authHeader() 
+   })
+);
+
 const getPromotionIdByPartner = (id) => (
     axios.get(`${process.env.REACT_APP_API_URL}/partner/promotion/${id}`, { 
        headers: header.authHeader() 
@@ -125,6 +131,7 @@ const partnerService = {
     getAllVoucherByPartner,
     getAllGameByPartner,
     getAllPromotionByPartner,
+    getAllPromotionByPartnerToReport,
     getPromotionIdByPartner,
     postPromotionByPartner,
     putPromotionByPartner,

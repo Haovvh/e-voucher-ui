@@ -1,10 +1,18 @@
 import axios from "axios";
 import header from "./header.service";
+
 const getAllAdmin = () => (
      axios.get(`${process.env.REACT_APP_API_URL}/admin/account?type=admin`,
     { 
         headers: header.authHeader() 
     })
+);
+
+const getAllPromotionByAdminToReport = () => (
+    axios.get(`${process.env.REACT_APP_API_URL}/admin/promotion/statistic`,
+   { 
+       headers: header.authHeader() 
+   })
 );
 
 const getAdminById = (id) =>(
@@ -13,25 +21,10 @@ const getAdminById = (id) =>(
         headers: header.authHeader() 
     })
 );
-const postAdmin = (email, password, address, name) => (     
-    axios.post(`${process.env.REACT_APP_API_URL}/admin/create`,{
-        email, password, address, name
-    },
-    { 
-        headers: header.authHeader() 
-    })
-);
-const putAdmin = (id, password, address, name) =>(
-    axios.put(`${process.env.REACT_APP_API_URL}/admin`,{
-        id, password, address, name
-    },
-    { 
-        headers: header.authHeader() 
-    })
-);
-const deleteAdminById = (id, type) =>(
-    axios.delete(`${process.env.REACT_APP_API_URL}/admin/delete`,{
-        data: {id, type}
+
+const putChangePassByAdmin = (check, password) =>(
+    axios.put(`${process.env.REACT_APP_API_URL}/admin/password`,{
+        id: header.getUserId(), check, password
     },
     { 
         headers: header.authHeader() 
@@ -222,15 +215,14 @@ const deleteVoucherIdByAdmin = (id) =>(
 
 
 const AdminService = {
+    getAllPromotionByAdminToReport,
     getAllAdmin,
-    getAdminById,
-    postAdmin,
-    putAdmin,
+    getAdminById,    
+    putChangePassByAdmin,
     getAllCategoryByAdmin,
     getAllStatusByAdmin,
     putStatusPromotionByAdmin,
-    getCustomerIdByAdmin,
-    deleteAdminById,
+    getCustomerIdByAdmin,    
     deletePromotionByAdmin,
     getAllPromotionByAdmin,
     getAllAdminByAdmin,
