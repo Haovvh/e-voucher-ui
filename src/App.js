@@ -25,6 +25,8 @@ import CustomerPromotion from "./pages/customer/customer.promotion";
 import CustomerProfile from "./pages/customer/customer.profile";
 import CustomerVoucher from "./pages/customer/customer.voucher";
 
+import GamePokemon from "./pages/GamePokeMon";
+
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import Logout from "./pages/Logout";
@@ -38,9 +40,9 @@ import "./assets/styles/responsive.css";
 import header from "./services/header.service";
 
 function App() {
+  const isUser = header.email() && header.role() && header.role()
   const isAdmin = header.email() && header.role() && header.role() === "admin";
-  const isPartner = header.email() && header.role() && header.role() === "partner";
-  console.log(isPartner)
+  const isPartner = header.email() && header.role() && header.role() === "partner";  
   const isCustomer = header.email() && header.role() && header.role() === "customer";
   return (
     <div className="App">
@@ -49,6 +51,7 @@ function App() {
         <Route path="/signin" exact component={SignIn} />
         <Route path="/404" exact component={Page404} />
         <Main>
+        <Route exact path="/gamepokemon" component={isUser ? GamePokemon : NotFound} />
           <Route exact path="/partnerpromotion" component={isPartner ? PartnerPromotion : NotFound} />
           <Route exact path="/partnerstore" component={isPartner ? PartnerStore : NotFound} />
           <Route exact path="/partnergame" component={isPartner ? PartnerGame : NotFound} />
@@ -68,10 +71,11 @@ function App() {
           <Route exact path="/customerprofile" component={isCustomer ? CustomerProfile : NotFound} />
           <Route exact path="/customervoucher" component={isCustomer ? CustomerVoucher : NotFound} />
           
-          <Route exact path="/logout" component={Logout} />
-          <Route exact path="/dashboard" component={Home} />
+          <Route exact path="/logout" component={isUser ? Logout : NotFound} />
+          
           <Route exact path="/tables" component={Tables} />
           <Route exact path="/billing" component={Billing} />
+          <Route exact path="/*" component={Home} />
           
         </Main>
       </Switch>

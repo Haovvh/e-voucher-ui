@@ -263,7 +263,7 @@ export default function PartnerStore () {
         <React.Fragment>
         <div className="container">
           <header className="jumbotron">
-            <h1>Store </h1> 
+            <h1>Stores </h1> 
           </header>
           <Card>
           <Row>

@@ -169,7 +169,7 @@ export default function CustomerVoucher () {
         <React.Fragment>
         <div className="container">
           <header className="jumbotron">
-            <h1>Your Voucher </h1> 
+            <h1>Your Vouchers </h1> 
           </header>
           <Card>
           <Row>

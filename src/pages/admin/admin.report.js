@@ -55,6 +55,28 @@ export default function AdminReport () {
       
     },
     {
+      title: "Total Voucher",
+      dataIndex: "Details",
+      render: (text, record) => {
+        let temp = 0;
+        record.Details.map(e=>{
+          temp += parseInt(e.quantity,10)
+        })
+        return temp
+      } 
+    },
+    {
+      title: "Balance Quantity",
+      dataIndex: "Details",
+      render: (text, record) => {
+        let temp = 0;
+        record.Details.map(e=>{
+          temp += parseInt(e.balanceQty,10)
+        })
+        return temp
+      } 
+    },
+    {
       title: "Start",
       dataIndex: "start",
       
@@ -66,21 +88,7 @@ export default function AdminReport () {
     },
     {
       title: "Status",
-      dataIndex: "Status",
-      render: (text, record) => {
-        if(record.Status === "Pending") {
-          return (<Button className="btn btn-success" onClick={()=> handleEditStatus(record)}> 
-          {record.Status}
-        </Button>)
-        } else if (record.Status === "Accepted") {
-          return (<Button className="btn btn-primary" onClick={()=> handleEditStatus(record)}> 
-          {record.Status}
-        </Button>)
-        } else {
-          (<Button className="btn btn-warning" onClick={()=> handleEditStatus(record)}> 
-        {record.Status}
-      </Button>)}
-      }   
+      dataIndex: "Status"
       
     },
     {
@@ -93,12 +101,6 @@ export default function AdminReport () {
               onClick={() => {
                 onEditData(record);
               }}
-            />
-            <DeleteOutlined
-              onClick={() => {
-                onDeleteData(record);
-              }}
-              style={{ color: "red", marginLeft: 12 }}
             />
           </>
         );
@@ -203,11 +205,11 @@ export default function AdminReport () {
       )
       AdminService.getAllPromotionByAdminToReport().then(
         response => {
-          console.log(response.data)
           if (response.data && response.data.success) {
-            
-            setPromotions(response.data.data)
-            setTempPromotions(response.data.data)
+            const temp = response.data.data
+            console.log(temp)
+            setPromotions(temp)
+            setTempPromotions(temp)
           }
           
         }, error => {
@@ -221,7 +223,7 @@ export default function AdminReport () {
         <React.Fragment>
         <div className="container">
           <header className="jumbotron">
-            <h1>Promotions </h1> 
+            <h1>Reports </h1> 
           </header>
           <Card>
           <Row>

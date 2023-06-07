@@ -58,6 +58,15 @@ export default function AdminPartner () {
       dataIndex: "address"      
     },
     {
+      title: "Category",
+      dataIndex: "Category",
+      render: (text, record) => (
+        <p>
+          {record.Category.type}
+        </p>
+       ),
+    },
+    {
       title: "CreatedAt",
       dataIndex: "createdAt",
       render: (text, record) => (
@@ -301,7 +310,7 @@ export default function AdminPartner () {
         <React.Fragment>
         <div className="container">
           <header className="jumbotron">
-            <h1>Partner </h1> 
+            <h1>Partners </h1> 
           </header>
           <Card>
           <Row>

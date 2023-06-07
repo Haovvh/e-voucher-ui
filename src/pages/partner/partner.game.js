@@ -92,7 +92,7 @@ export default function PartnerGame () {
         <React.Fragment>
         <div className="container">
           <header className="jumbotron">
-            <h1>Game </h1> 
+            <h1>Games </h1> 
           </header>
           <Card>
           <Row>

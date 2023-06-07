@@ -271,7 +271,7 @@ export default function AdminCustomer () {
         <React.Fragment>
         <div className="container">
           <header className="jumbotron">
-            <h1>Customer </h1> 
+            <h1>Customers </h1> 
           </header>
           <Card>
           <Row>

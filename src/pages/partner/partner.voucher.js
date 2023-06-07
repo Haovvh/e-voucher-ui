@@ -115,7 +115,7 @@ export default function PartnerVoucher () {
         <React.Fragment>
         <div className="container">
           <header className="jumbotron">
-            <h1>Voucher </h1> 
+            <h1>Vouchers</h1> 
           </header>
           <Card>
           <Row>
