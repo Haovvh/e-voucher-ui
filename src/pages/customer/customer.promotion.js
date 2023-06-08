@@ -114,6 +114,7 @@ export default function CustomerPromotion () {
   }
   
   const handleClickJoin = (record) => {
+    alert(`${record.id} ${record.title}`)
     setPromotionID(record.id)
     setIsPlayGame(true)
     

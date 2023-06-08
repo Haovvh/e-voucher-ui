@@ -16,7 +16,7 @@ import {
   Form,
   Input
 } from "antd";
-import { EditOutlined, DeleteOutlined, SearchOutlined, FolderViewOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, DeleteOutlined, SearchOutlined, FolderViewOutlined } from "@ant-design/icons";
 
 import partnerService from "../../services/partner.service";
 
@@ -102,7 +102,8 @@ export default function PartnerPromotion () {
         } else {
           return (
             <>
-              <FolderViewOutlined
+              <EyeOutlined
+              style={{ color: "red", marginLeft: 12 }}
                 onClick={() => {
                   onViewData(record);
                 }}

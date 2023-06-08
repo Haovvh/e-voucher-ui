@@ -16,9 +16,10 @@ import {
   Form,
   Input
 } from "antd";
-import { EditOutlined, DeleteOutlined, SearchOutlined, FolderViewOutlined } from "@ant-design/icons";
+import {  EyeOutlined , SearchOutlined } from "@ant-design/icons";
 
 import partnerService from "../../services/partner.service";
+import PartnerReportDetail from "./partner.reportpromotion";
 
 import header from "../../services/header.service";
 
@@ -81,34 +82,17 @@ export default function PartnerReport () {
     {
       title: "Actions",
       key: 'action',      
-      render: (record) => {
-        if(record.Status === 'Pending') {
+      render: (record) => {        
           return (
             <>
-              <EditOutlined
-                onClick={() => {
-                  onEditData(record);
-                }}
-              />
-              <DeleteOutlined
-                onClick={() => {
-                  onDeleteData(record);
-                }}
-                style={{ color: "red", marginLeft: 12 }}
-              />
-            </>
-          );
-        } else {
-          return (
-            <>
-              <FolderViewOutlined
+              <EyeOutlined
+              style={{ color: "red", marginLeft: 12 }}
                 onClick={() => {
                   onViewData(record);
                 }}
               />              
             </>
-          );
-        }
+          );       
         
       },    
   
@@ -172,7 +156,7 @@ export default function PartnerReport () {
     useEffect(()=>{   
       partnerService.getAllPromotionByPartner(header.getUserId()).then(
         response => {
-          console.log(response.data)
+          
           if (response.data && response.data.success) {                 
             setTempPromotions(response.data.data)
             setPromotions(response.data.data)
@@ -189,6 +173,7 @@ export default function PartnerReport () {
           <header className="jumbotron">
             <h1>Promotions </h1> 
           </header>
+          {!show && (
           <Card>
           <Row>
               <Col md={6}>
@@ -201,10 +186,17 @@ export default function PartnerReport () {
                 prefix={<SearchOutlined />}
               />
               </Col>
-              
+              <Col  md={{ span: 3, offset: 15 }}>
+              <Button  className='btn btn-success ' onClick={handleClickNew}>
+            New
+          </Button>
+              </Col>
             </Row>
-          </Card>
+          </Card>)}
           
+          
+          <PartnerReportDetail id={promotionID} show={show} view={readOnly}/>
+          {show ? <></> : 
           <Card
           bordered={false}
           className="criclebox tablespace mb-24"
@@ -223,7 +215,9 @@ export default function PartnerReport () {
               className="ant-border-space"
             />
           </div>
-        </Card>          
+        </Card>
+          }
+          
         </div>
         </React.Fragment>
     )

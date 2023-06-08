@@ -22,9 +22,11 @@ h2{
 }
 .memoryCard{
   height: 80px;
-  width: 120px;
+  width: 150px;
   border: 1.5px solid transparent;
   transition: all .3s ease-in;
+  margin: 1 auto;
+  border: 1 auto;
 }
 .memoryCard.front:hover{
   cursor: pointer;

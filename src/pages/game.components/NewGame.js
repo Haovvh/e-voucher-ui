@@ -1,7 +1,4 @@
 import React, { Component } from "react";
-import {
-  Button
-} from "antd";
 
 export class NewGame extends Component {
 
@@ -19,11 +16,11 @@ export class NewGame extends Component {
     const { visible } = this.state;
     return (
       <div className="menu-item">
-        <Button className='btn btn-success btn-play' onClick={this.handleClick}
+        <button className="btn btn-success btn-play"
+          onClick={this.handleClick}
           style={{ visibility: visible ? "visible" : "hidden" }}>
-                Play Game
-        </Button>
-        
+          Play
+        </button>
       </div >
     );
   }

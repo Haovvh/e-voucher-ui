@@ -9,21 +9,20 @@ const createId = () => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
+
+
 export default function GamePokemon (props) {
 
   const [newGame, setNewGame] = useState(false);
   const [won, setWon] = useState(false);
   const [cards, setCards] = useState([]);
   const [clicks, setClicks] = useState(0);
-  const[promotionID, setPromotionID] = useState("");
-  const [vouchers, setVouchers] = useState([]);
-  const [showVoucher, setShowVoucher] = useState(false);
+  const [promotionID, setPromotionID] = useState("");  
   const [voucherListId, setVoucherListId] = useState([])
   const voucherListID = [];
 
   const countClicks = () => {
-    setClicks(clicks+1);
-    
+    setClicks(clicks+1);    
   }
 
   const shuffleCards = (a) => {
@@ -34,11 +33,15 @@ export default function GamePokemon (props) {
     return a;
   }
 
-  const resetGame = () => {
-    setNewGame(false);
+  const resetGame = () => {   
+    setNewGame(false)
     setWon(false);
     setCards([]);
     setClicks(0);
+    setTimeout(() => {
+      initGame()
+    }, 1000);   
+    
   }
 
   const hasWon = () => {
@@ -88,6 +91,7 @@ export default function GamePokemon (props) {
   };
 
   const generateDeck = () => {
+    
     let amount = 5;
     let listcards = [];
     for (let i = 1; i < amount + 1; i++) {
@@ -123,16 +127,13 @@ export default function GamePokemon (props) {
                 if(response.data && response.data.success === true) {
                     const temp = response.data.data
                     setPromotionID(temp.id)
-                    setVouchers(temp.Details)
                     for(let i = 0; i< temp.Details.length; i++) {
                         if(temp.Details[i].balanceQty>0) {
                             voucherListID.push(temp.Details[i].Voucher.id)
                         }                            
                     }
                     setVoucherListId(voucherListID)
-                    setTimeout(()=>{
-                        setShowVoucher(true)
-                    },10000)
+                    
                 }
             }
         )

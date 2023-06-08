@@ -25,8 +25,8 @@ import CustomerPromotion from "./pages/customer/customer.promotion";
 import CustomerProfile from "./pages/customer/customer.profile";
 import CustomerVoucher from "./pages/customer/customer.voucher";
 
+import Game2048 from "./pages/Game2048";
 import GamePokemon from "./pages/GamePokeMon";
-
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import Logout from "./pages/Logout";
@@ -51,7 +51,8 @@ function App() {
         <Route path="/signin" exact component={SignIn} />
         <Route path="/404" exact component={Page404} />
         <Main>
-        <Route exact path="/gamepokemon" component={isUser ? GamePokemon : NotFound} />
+          <Route exact path="/gamepokemon" component={isUser ? GamePokemon : NotFound} />
+          <Route exact path="/game2048" component={isUser ? Game2048 : NotFound} />
           <Route exact path="/partnerpromotion" component={isPartner ? PartnerPromotion : NotFound} />
           <Route exact path="/partnerstore" component={isPartner ? PartnerStore : NotFound} />
           <Route exact path="/partnergame" component={isPartner ? PartnerGame : NotFound} />

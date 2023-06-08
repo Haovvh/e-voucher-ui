@@ -19,7 +19,7 @@ import {
 } from "antd";
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import notification from "../../utils/notification";
 import AdminService from "../../services/admin.service";
 
@@ -88,17 +88,12 @@ export default function AdminPromotion () {
       render: (record) => {
         return (
           <>
-            <EditOutlined
+            <EyeOutlined
+            style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
                 onEditData(record);
               }}
-            />
-            <DeleteOutlined
-              onClick={() => {
-                onDeleteData(record);
-              }}
-              style={{ color: "red", marginLeft: 12 }}
-            />
+            />           
           </>
         );
       },    

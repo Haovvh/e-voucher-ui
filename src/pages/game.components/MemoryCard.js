@@ -39,7 +39,7 @@ export class MemoryCard extends Component {
 }
 
 const cardBack = {
-  background: "#3700B3",
+  background: "pink",
 }
 
 
