@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import Button from 'react-bootstrap/Button';
+
 import {
   Row,
   Col,
@@ -22,6 +23,7 @@ import partnerService from "../../services/partner.service";
 import PartnerReportDetail from "./partner.reportpromotion";
 
 import header from "../../services/header.service";
+import notification from "../../utils/notification";
 
 export default function PartnerReport () {
     const [show, setShow] = useState(false);
@@ -61,19 +63,24 @@ export default function PartnerReport () {
       
     },
     {
+      title: "Total Customer Join",
+      dataIndex: "Participations",
+      
+    },
+    {
       title: "Status",
       dataIndex: "Status",
       render: (text, record) => {
         if(record.Status === "Pending") {
-          return (<Button className="btn btn-success" onClick={()=> handleEditStatus(record)}> 
+          return (<Button className="btn btn-success" > 
           {record.Status}
         </Button>)
         } else if (record.Status === "Accepted") {
-          return (<Button className="btn btn-primary" onClick={()=> handleEditStatus(record)}> 
+          return (<Button className="btn btn-primary" > 
           {record.Status}
         </Button>)
         } else {
-          (<Button className="btn btn-warning" onClick={()=> handleEditStatus(record)}> 
+          (<Button className="btn btn-warning" > 
         {record.Status}
       </Button>)}
       }
@@ -115,39 +122,12 @@ export default function PartnerReport () {
     }
   }
   
-  const handleEditStatus = (record) => {
-    
-  } 
-
-  const onDeleteData = (record) => {
-    
-    const id = record.id
-    const title = record.title;
-    
-    if(window.confirm(`Are you sure you want to delete this ${id} ${title}}`)){
-      partnerService.deletePromotion(id).then(
-        response => {
-          if(response.data && response.data.success) {
-            alert("Delete success");
-            setIsLoad(!isLoad);
-          }
-          
-        }, error => {
-          console.log(error)
-        }
-      )     
-    }    
-  };
   const handleChangeSearch = (event) => {    
     
     setSearch(event.target.value)
   }
 
   
-  const onEditData = (record) => { 
-    setPromotionID(record.id)
-    setShow(true)    
-  };
   const onViewData = (record) => { 
     setPromotionID(record.id)
     setShow(true)    
@@ -157,9 +137,11 @@ export default function PartnerReport () {
       partnerService.getAllPromotionByPartner(header.getUserId()).then(
         response => {
           
-          if (response.data && response.data.success) {                 
-            setTempPromotions(response.data.data)
-            setPromotions(response.data.data)
+          if (response.data && response.data.success) {  
+            const temp = response.data.data  
+            console.log(temp)          
+            setTempPromotions(temp)
+            setPromotions(temp)
           }
           
         }, error => {

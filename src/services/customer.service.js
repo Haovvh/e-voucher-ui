@@ -32,7 +32,13 @@ const putChangePassByCustomer = ( check, password ) =>(
     })
 );
 
-const getAllPromotionByCustomer = (search = "", type = "",  location ="", latest = true) =>(
+const getAllPromotionByCustomer = (search = "", type = "",  location ="", latest = false) =>(
+    axios.get(`${process.env.REACT_APP_API_URL}/customer/promotion?search=${search}&type=${type}&latest=${latest}&location=${location}`,
+    { 
+        headers: header.authHeader() 
+    })
+);
+const getAllNewPromotionByCustomer = (search = "", type = "",  location ="", latest = true) =>(
     axios.get(`${process.env.REACT_APP_API_URL}/customer/promotion?search=${search}&type=${type}&latest=${latest}&location=${location}`,
     { 
         headers: header.authHeader() 
@@ -95,6 +101,7 @@ const postParticipationByCustomer = ( promotionID  ) =>(
 const customerService = {
     getCustomerIdByCustomer,
     getAllPromotionByCustomer,
+    getAllNewPromotionByCustomer,
     putCustomerByCustomer,
     getAllPromotionNearByCustomer,
     getAllCategoryByCustomer,

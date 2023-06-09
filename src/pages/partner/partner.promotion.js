@@ -14,7 +14,7 @@ import {
   Tag,  
   Typography,
   Form,
-  Input
+  Input,  
 } from "antd";
 import { EditOutlined, EyeOutlined, DeleteOutlined, SearchOutlined, FolderViewOutlined } from "@ant-design/icons";
 
@@ -22,7 +22,7 @@ import partnerService from "../../services/partner.service";
 
 import PartnerNewPromotion from "./partner.newpromotion";
 import header from "../../services/header.service";
-
+import notification from "../../utils/notification";
 export default function PartnerPromotion () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
@@ -142,11 +142,11 @@ export default function PartnerPromotion () {
     const id = record.id
     const title = record.title;
     
-    if(window.confirm(`Are you sure you want to delete this ${id} ${title}}`)){
+    if(window.confirm(notification.CONFIRM_DELETE)){
       partnerService.deletePromotion(id).then(
         response => {
           if(response.data && response.data.success) {
-            alert("Delete success");
+            alert(notification.DELETE);
             setIsLoad(!isLoad);
           }
           
@@ -188,10 +188,12 @@ export default function PartnerPromotion () {
     return(
         <React.Fragment>
         <div className="container">
+        {!show && (
+          <>
           <header className="jumbotron">
             <h1>Promotions </h1> 
           </header>
-          {!show && (
+          
           <Card>
           <Row>
               <Col md={6}>
@@ -210,11 +212,13 @@ export default function PartnerPromotion () {
           </Button>
               </Col>
             </Row>
-          </Card>)}
+          </Card>
+          </>
+          )}
           
           
           <PartnerNewPromotion id={promotionID} show={show} view={readOnly}/>
-          {show ? <></> : 
+          {!show && 
           <Card
           bordered={false}
           className="criclebox tablespace mb-24"

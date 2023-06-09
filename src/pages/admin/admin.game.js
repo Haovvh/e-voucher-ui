@@ -39,6 +39,17 @@ export default function AdminGame () {
       dataIndex: "title",
     }, 
     {
+      title: "Play Game",
+      dataIndex: "path",
+      render: (text, record) => {
+        if (record.path !== "") {
+         return <Button className="btn btn-primary" onClick={()=> handleClickJoin(record)}> 
+         Play
+       </Button>       
+       }   
+     }
+    }, 
+    {
       title: "CreatedAt",
       dataIndex: "createdAt",
       render: (text, record) => (
@@ -81,7 +92,9 @@ export default function AdminGame () {
     
   ];
   
-  
+  const handleClickJoin = (record) => {
+    window.location.assign(`${record.path}`)
+  }
 
   const onDeleteData = (record) => {
     
@@ -199,10 +212,11 @@ export default function AdminGame () {
       AdminService.getAllGameByAdmin().then(
         response => {
           if (response.data && response.data.success) {
-                  
+            const temp = response.data.data;
+            console.log(temp)
             
-            setDatas(response.data.data)
-            setTempDatas(response.data.data)
+            setDatas(temp)
+            setTempDatas(temp)
           }
           
         }, error => {

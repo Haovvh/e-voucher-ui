@@ -87,6 +87,11 @@ export default function AdminReport () {
       
     },
     {
+      title: "Total Customer Join",
+      dataIndex: "Participations",
+      
+    },
+    {
       title: "Status",
       dataIndex: "Status"
       
@@ -190,20 +195,7 @@ export default function AdminReport () {
     
   };
     useEffect(()=>{   
-      AdminService.getAllStatusByAdmin().then(
-        response => {
-          if(response.data && response.data.success === true) {
-            const temp = response.data.data
-            temp.unshift({
-              id:0,
-              state: "Vui lòng chọn trạng thái"
-            })
-            console.log(temp)
-            setStatusCode(temp)
-            
-          }
-        }
-      )
+      
       AdminService.getAllPromotionByAdminToReport().then(
         response => {
           if (response.data && response.data.success) {

@@ -40,7 +40,7 @@ import "./assets/styles/responsive.css";
 import header from "./services/header.service";
 
 function App() {
-  const isUser = header.email() && header.role() && header.role()
+  const isUser = header.email() && header.role() 
   const isAdmin = header.email() && header.role() && header.role() === "admin";
   const isPartner = header.email() && header.role() && header.role() === "partner";  
   const isCustomer = header.email() && header.role() && header.role() === "customer";
@@ -72,7 +72,7 @@ function App() {
           <Route exact path="/customerprofile" component={isCustomer ? CustomerProfile : NotFound} />
           <Route exact path="/customervoucher" component={isCustomer ? CustomerVoucher : NotFound} />
           
-          <Route exact path="/logout" component={isUser ? Logout : NotFound} />
+          <Route exact path="/signin" component={isUser ? Logout : NotFound} />
           
           <Route exact path="/tables" component={Tables} />
           <Route exact path="/billing" component={Billing} />

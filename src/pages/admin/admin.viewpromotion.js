@@ -1,11 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Highlighter from 'react-highlight-words';
-import { SearchOutlined } from '@ant-design/icons';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { 
   
   Card,
@@ -25,13 +21,17 @@ import {
   
 } from "antd";
 import Form from 'react-bootstrap/Form';
-import partnerService from '../../services/partner.service';
+import AdminService from '../../services/admin.service';
 
-export default function PartnerReportDetail(props) {
+export default function AdminViewPromotion(props) {
 
+    
     const [readOnly, setReadOnly] = useState(false);
     
+    
     const [gameID, setGameID] = useState(0)
+    const [vouchers, setVouchers] = useState([])
+   
     
     const [promotion, setPromotion] = useState({
       title:"",
@@ -39,9 +39,9 @@ export default function PartnerReportDetail(props) {
       start: "",
       end: ""
     })
+    
 
-
-    const [vouchers, setVouchers] = useState([])    
+    
     
     const columns = [
       {
@@ -62,55 +62,43 @@ export default function PartnerReportDetail(props) {
         title: "Quantity",
         dataIndex: "quantity",
         
-      },
-      {
-        title: "Balance",
-        dataIndex: "balanceQty",
-        
       }
-    ];    
-   
-    const handleChangeEnd = (event) => (
-      setPromotion(prevState =>({
-        ...prevState, end: event.target.value
-      }))
-    )
+      
+    ];
 
-    
-    
   useEffect(()=>{   
-    if(props.show) {      
+    if(props.show) {
+      
+      
       if(props.id) {
-        partnerService.getPromotionIdByPartner(props.id).then(
+        AdminService.getPromotionIdByAdmin(props.id).then(
           response=>{
             if(response.data && response.data.success && response.data.data) {
-              console.log(response.data.data)
-              const tempVouchers = [];
-              const tempArray = response.data.data.Details
-              tempArray.map((option) =>{
-                  tempVouchers.push({
-                    key: option.Voucher.id,
-                    id: option.Voucher.id,
-                    title: option.Voucher.title,
-                    description: option.Voucher.description,
-                    value: option.Voucher.value,
-                    quantity: option.quantity,
-                    balanceQty: option.balanceQty
-                  })
-              })
-              setReadOnly(props.view)
-
-              setVouchers(tempVouchers);
-              const temp = response.data.data
-              setGameID(temp.Game.title)
-              
-              setPromotion({
-                title: temp.title,
-                description: temp.description,
-                start: temp.start,
-                end: temp.end
-              })
-            }
+                console.log(response.data.data)
+                const tempVouchers = [];
+                const tempArray = response.data.data.Details
+                tempArray.map((option) =>{
+                    tempVouchers.push({
+                      key: option.Voucher.id,
+                      id: option.Voucher.id,
+                      title: option.Voucher.title,
+                      description: option.Voucher.description,
+                      value: option.Voucher.value,
+                      quantity: option.quantity
+                    })
+                })
+                setReadOnly(props.view)
+                setVouchers(tempVouchers);
+                const temp = response.data.data
+                
+                setGameID(temp.Game.title)
+                setPromotion({
+                  title: temp.title,
+                  description: temp.description,
+                  start: temp.start,
+                  end: temp.end
+                })
+              }
             
           }
         )
@@ -130,7 +118,10 @@ export default function PartnerReportDetail(props) {
 
   return (
     <>
-    <div>     
+    <div> 
+    <header className="jumbotron">
+            <h1>Details </h1> 
+          </header>
     
     <Container>
     <Row>
@@ -153,15 +144,15 @@ export default function PartnerReportDetail(props) {
       <Row>
         <Col>
         <Input 
-          readOnly={readOnly}
+          readOnly
           placeholder="Title" 
           value={promotion.title}
-          
+         
         /> 
         </Col>
         <Col>
         <Input 
-            readOnly={readOnly}
+            readOnly
             placeholder="Description" 
             value={promotion.description}
             
@@ -169,36 +160,37 @@ export default function PartnerReportDetail(props) {
         </Col>
         <Col>
         <Input 
-            readOnly={readOnly}
+            readOnly
             type='date'
             value={promotion.start}    
-            
+           
             />    
             
         </Col>
         <Col>
         <Input 
-            readOnly={readOnly}
+            readOnly
             type='date'
             value={promotion.end}  
-            onChange = {(event) =>{handleChangeEnd(event)}}          
+                
             />
         </Col>
         <Col>
         
         <Form.Control
-        readOnly={readOnly}
-       type="text"
+        readOnly
         value={gameID}
         
-        >         
+        >
+        
+      
       </Form.Control>
         </Col>
       </Row>
     </Container>
     
     
-    { vouchers && vouchers.length > 0 &&
+    
     <Card
     bordered={false}
     className="criclebox tablespace mb-24"
@@ -215,7 +207,8 @@ export default function PartnerReportDetail(props) {
         />
         
     </Card>
-    }
+    
+      
     </div>
          
     </>

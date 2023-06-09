@@ -49,6 +49,11 @@ const getAllPromotionByAdmin = () => (
        headers: header.authHeader() 
    })
 );
+const getPromotionIdByAdmin = (id) => (
+    axios.get(`${process.env.REACT_APP_API_URL}/admin/promotion/${id}`, { 
+       headers: header.authHeader() 
+   })
+);
 
 const putStatusPromotionByAdmin = (id, statusID) => (
     axios.put(`${process.env.REACT_APP_API_URL}/admin/promotion`, {
@@ -243,6 +248,7 @@ const AdminService = {
     postGameByAdmin,
     putGameByAdmin,
     deleteVoucherIdByAdmin,
-    putCustomerByAdmin
+    putCustomerByAdmin,
+    getPromotionIdByAdmin
 }
 export default AdminService

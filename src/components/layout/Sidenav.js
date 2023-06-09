@@ -455,7 +455,7 @@ function Sidenav({ color }) {
       }
       { isUser && 
         <Menu.Item key="40">
-        <NavLink to="/logout">
+        <NavLink to="/signin">
           <span
             className="icon"
             style={{

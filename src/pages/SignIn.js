@@ -51,7 +51,7 @@ export default function SignIn () {
           if( response.data && response.data.success ) {
             console.log(response.data)
             localStorage.setItem("isuser", JSON.stringify(response.data));
-            alert("SignIn Success")
+            alert(notification.SIGN_SUCCESS)
             window.location.assign('/')
             
           } 
@@ -66,7 +66,7 @@ export default function SignIn () {
     }
   }
   useEffect ( () => {
-    Service.Logout();
+   
     localStorage.clear();
   }, [])
 

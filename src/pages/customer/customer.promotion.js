@@ -30,9 +30,11 @@ export default function CustomerPromotion () {
     const [searchLocation, setSearchLocation] = useState("");
     const [searchTitle, setSearchTitle] = useState("");
     const [promotions, setPromotions] = useState([]);
+    const [gameName, setGameName] = useState("");
     const [tempPromotions, setTempPromotions] = useState([]);
     const [isPlayGame, setIsPlayGame] = useState(false)
     const [categories, setCategories] = useState([])
+    const [showNew, setShowNew] = useState(false)
 
     const [categoryId, setCategoryId] = useState("");
 
@@ -80,7 +82,7 @@ export default function CustomerPromotion () {
   ];
 
   const handleClickNew = () => {
-
+    setPromotions(tempPromotions);
   }
   
   const handleChangeSearchTitle = (event) => { 
@@ -100,13 +102,23 @@ export default function CustomerPromotion () {
   }
 
   const handleClickSearch = () => {
-    console.log(searchTitle, categoryId, searchLocation)
+    
     customerService.getAllPromotionByCustomer(searchTitle, categoryId, searchLocation).then(
       response => {
         if(response.data && response.data.success === true) {
           const temp = response.data.data
           console.log(temp)
+          setShowNew(true)
           setPromotions(temp)
+          customerService.getAllNewPromotionByCustomer(searchTitle, categoryId, searchLocation).then(
+            response => {
+              if(response.data && response.data.success === true) {
+                const tempNew = response.data.data
+                console.log(tempNew);
+                setTempPromotions(tempNew);
+              }
+            }
+          )
           
         }
       }
@@ -114,7 +126,8 @@ export default function CustomerPromotion () {
   }
   
   const handleClickJoin = (record) => {
-    alert(`${record.id} ${record.title}`)
+    
+    setGameName(record.Game.path)
     setPromotionID(record.id)
     setIsPlayGame(true)
     
@@ -154,30 +167,34 @@ export default function CustomerPromotion () {
     },[isLoad])
     return(
         <React.Fragment>
-          {(isPlayGame && promotionID !== "") ? <CustomerPlayGame show={isPlayGame} id={promotionID}/> :
+          {(isPlayGame && promotionID !== "") ? <CustomerPlayGame game={gameName} show={isPlayGame} id={promotionID}/> :
         <div className="container">
           <header className="jumbotron">
             <h1>Promotions </h1> 
           </header>
           <Card>
           <Row>
-              <Col md={{ span: 4, offset: 0 }}>                
-              <Input
-                value={searchTitle}
-                onChange={(event) => handleChangeSearchTitle(event)}
-                className="header-search"
+              <Col md={{ span: 4, offset: 0 }}>   
+              <Form.Group  >
+                <Form.Control 
                 placeholder="Search Title..."
-                prefix={<SearchOutlined />}
-              />
+                value={searchTitle}   
+                
+                onChange={(event) => handleChangeSearchTitle(event)}
+                />        
+              </Form.Group>             
+              
               </Col>              
               <Col md={{ span: 4, offset: 1 }}>
-              <Input
-                value={searchLocation}
-                onChange={handleChangeSearchLocation}
-                className="header-search"
+              <Form.Group  >
+                <Form.Control 
                 placeholder="Search Location..."
-                prefix={<SearchOutlined />}
-              />
+                value={searchLocation}   
+                
+                onChange={handleChangeSearchLocation}
+                />        
+              </Form.Group>
+              
               
               </Col>
               <Col md={{ span: 4, offset: 1 }}>
@@ -198,12 +215,15 @@ export default function CustomerPromotion () {
               <Button className="btn btn-success" onClick={handleClickSearch}>
                 Search
               </Button>
-              </Col>
+              </Col> 
+              {showNew && 
               <Col md={{ span: 2, offset: 1 }}>
               <Button className="btn btn-success" onClick={handleClickNew}>
                 Mới nhất
               </Button>
               </Col>
+              }
+              
               
               
             </Row>

@@ -54,7 +54,7 @@ export default function PartnerNewPromotion(props) {
       end: ""
     })
     const [promotionID, setPromotionID] = useState(0);
-
+    const [tempVoucherID, setTempVoucherID] = useState(0)
 
     const [vouchers, setVouchers] = useState([])
     
@@ -116,8 +116,9 @@ export default function PartnerNewPromotion(props) {
 
     const onEditData = (record) => {
       const temp = vouchers.filter(e=> e.id === record.id)
-      console.log(temp[0])
+      
       if(temp && temp[0]) {
+        setTempVoucherID(temp[0].id)
         setVoucher({
           id: temp[0].id,
           title: temp[0].title,
@@ -154,16 +155,22 @@ export default function PartnerNewPromotion(props) {
       setShow(false)
       clearScreen();
     }
+    const clearVoucher = () => {
+      setShow(false)  
+      setQuantity(0)
+            setVoucher({
+              id:0,
+              description: "",
+              title: ""
+            })
+    }
   
 
     const handleClickSave = () => {   
       if(voucher.id !== 0 && quantity >0 && voucher.description && voucher.value)  {
-        const check = vouchers.filter(option => option.id === voucher.id).length
-        if (check > 0) {
-          alert("Voucher đã tồn tại trong promotion")
-        } else {
-          setShow(false)    
-          setVouchers([...vouchers, {
+        if(voucher.id === tempVoucherID) {
+          const tempVouchers = vouchers.filter(option => option.id !== voucher.id)
+          setVouchers([...tempVouchers, {
             
             id: voucher.id,
             title: voucher.title,
@@ -171,16 +178,28 @@ export default function PartnerNewPromotion(props) {
             value: voucher.value,
             quantity: quantity
           }])
-          setQuantity(0)
-          setVoucher({
-            id:0,
-            description: "",
-            title: ""
-          })
-        }        
+          clearVoucher();
+        } else {        
+          const check = vouchers.filter(option => option.id === voucher.id).length
+          if (check > 0) {
+            alert(notification.VOUCHER_IS_EXIT)
+          } else {
+            const tempVouchers = vouchers.filter(option => option.id !== tempVoucherID)              
+            setVouchers([...tempVouchers, {
+              
+              id: voucher.id,
+              title: voucher.title,
+              description: voucher.description,
+              value: voucher.value,
+              quantity: quantity
+            }])
+            clearVoucher();
+            
+          } 
+        }       
         
       } else {
-        alert("Vui lòng chọn voucher và số lượng")
+        alert(notification.WRONG_INPUT)
       }
     }
     const handleshow = () => {
@@ -234,7 +253,7 @@ export default function PartnerNewPromotion(props) {
             partnerService.postPromotionByPartner(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, gameID).then(
               response=> {
                 if(response.data && response.data.success) {
-                  alert("Create Success")
+                  alert(notification.CREATE)
                   window.location.assign('/partnerpromotion')                  
                 }
                 
@@ -246,7 +265,7 @@ export default function PartnerNewPromotion(props) {
             partnerService.putPromotionByPartner(promotion.title, promotion.description, promotion.start, promotion.end,vouchers, promotionID, gameID).then(
               response=> {
                 if(response.data && response.data.success) {
-                  alert("Update Success")
+                  alert(notification.EDIT)
                   window.location.assign('/partnerpromotion')
                   
                 }
@@ -257,11 +276,11 @@ export default function PartnerNewPromotion(props) {
             )
           }
         } else {
-          alert("Start < End")
+          alert(notification.CHECK_FROM_TO)
         }
         
       } else {
-        alert("Vui lòng nhập đủ thông tin")
+        alert(notification.WRONG_INPUT)
       }
       
       
@@ -354,6 +373,9 @@ export default function PartnerNewPromotion(props) {
   return (
     <>
     <div> 
+    <header className="jumbotron">
+            <h1>Details </h1> 
+          </header>
     
     <Container>
       <Row>
@@ -454,7 +476,7 @@ export default function PartnerNewPromotion(props) {
     <Card
     bordered={false}
     className="criclebox tablespace mb-24"
-    title="Voucher Table"
+    title="Vouchers"
     >
         
         <Table

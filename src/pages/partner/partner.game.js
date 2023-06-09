@@ -35,6 +35,17 @@ export default function PartnerGame () {
       title: "Title",
       dataIndex: "title",
     }, 
+    {
+      title: "Play Game",
+      dataIndex: "path",
+      render: (text, record) => {
+        if (record.path !== "") {
+         return <Button className="btn btn-primary" onClick={()=> handleClickJoin(record)}> 
+         Play
+       </Button>       
+       }   
+     }
+    }, 
    
     
     {
@@ -57,6 +68,10 @@ export default function PartnerGame () {
     }    
   ];
   
+  const handleClickJoin = (record) => {
+    window.location.assign(`${record.path}`)
+  }
+
   const handleKeyDown = (e) => {
     
     if (e.key === 'Enter') {

@@ -4,7 +4,6 @@ import Service from "../services/auth.service"
 
 function Logout() {
   useEffect ( ()=>{
-    Service.Logout();
     window.location.assign('/signin')
   })
 

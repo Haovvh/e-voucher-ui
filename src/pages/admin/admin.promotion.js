@@ -22,6 +22,7 @@ import Modal from 'react-bootstrap/Modal';
 import { EditOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import notification from "../../utils/notification";
 import AdminService from "../../services/admin.service";
+import AdminViewPromotion from "./admin.viewpromotion";
 
 export default function AdminPromotion () {
     const [show, setShow] = useState(false);
@@ -33,7 +34,7 @@ export default function AdminPromotion () {
     const [promotions, setPromotions] = useState([]);
     const [tempPromotions, setTempPromotions] = useState([]);
     const [statusID, setStatusID] = useState("");    
-    
+    const [viewPromotion, setViewPromotion] = useState(false)
   const columns = [    
     {
       title: "TITLE",
@@ -153,31 +154,9 @@ export default function AdminPromotion () {
     
   } 
 
-  const onDeleteData = (record) => {
-    
-    const id = record.id
-    const title = record.title;
-    
-    if(window.confirm(notification.CONFIRM_DELETE)){
-      AdminService.deletePromotionByAdmin(id).then(
-        response => {
-          if(response.data && response.data.success) {
-            alert(notification.DELETE);
-            setIsLoad(!isLoad);
-          }
-          
-        }, error => {
-          console.log(error)
-        }
-      )     
-    }    
-  };
-
-  
-  const onEditData = (record) => { 
-
+  const onEditData = (record) => {
     setPromotionID(record.id)
-    setShow(true)
+    setViewPromotion(true)
     
   };
     useEffect(()=>{   
@@ -213,9 +192,12 @@ export default function AdminPromotion () {
     return(
         <React.Fragment>
         <div className="container">
+        {!viewPromotion && (
+          <>
           <header className="jumbotron">
             <h1>Promotions </h1> 
           </header>
+          
           <Card>
           <Row>
               <Col md={6}>
@@ -231,8 +213,9 @@ export default function AdminPromotion () {
               
             </Row>
           </Card>
-          
-          
+          </>)}
+          <AdminViewPromotion id={promotionID} show={viewPromotion} view={true}/>
+          {!viewPromotion &&
           <Card
           bordered={false}
           className="criclebox tablespace mb-24"
@@ -249,7 +232,7 @@ export default function AdminPromotion () {
               className="ant-border-space"
             />
           </div>
-        </Card>
+        </Card> }
         <Modal show={show} onHide={handleClickClose}>
         <Modal.Header closeButton>
           <Modal.Title>Status</Modal.Title>
