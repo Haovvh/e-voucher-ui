@@ -121,15 +121,11 @@ export default function PartnerReportDetail(props) {
     
   },[props.show])
 
-  if(props && !props.show) {
-    return (
-        <>
-        </>
-    )
-  }
+  
 
   return (
-    <>
+    <> 
+    {props.show && 
     <div>     
     
     <Container>
@@ -217,7 +213,7 @@ export default function PartnerReportDetail(props) {
     </Card>
     }
     </div>
-         
+        } 
     </>
   );
 }

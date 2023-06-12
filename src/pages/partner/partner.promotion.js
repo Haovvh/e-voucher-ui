@@ -73,7 +73,7 @@ export default function PartnerPromotion () {
           {record.Status}
         </Button>)
         } else {
-          (<Button className="btn btn-warning" onClick={()=> handleEditStatus(record)}> 
+          return (<Button className="btn btn-warning" onClick={()=> handleEditStatus(record)}> 
         {record.Status}
       </Button>)}
       }
@@ -83,7 +83,7 @@ export default function PartnerPromotion () {
       title: "Actions",
       key: 'action',      
       render: (record) => {
-        if(record.Status === 'Pending') {
+        if(record.Status !== 'Accepted') {
           return (
             <>
               <EditOutlined

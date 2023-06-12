@@ -183,18 +183,18 @@ const putVoucherByAdmin = (id, title, description, value) =>(
         headers: header.authHeader() 
     })
 );
-const postGameByAdmin = (title) => (     
+const postGameByAdmin = (title, path) => (     
     axios.post(`${process.env.REACT_APP_API_URL}/admin/feature`,{
-        title,
+        title, path,
         type: 'game'
     },
     { 
         headers: header.authHeader() 
     })
 );
-const putGameByAdmin = (id, title) =>(
+const putGameByAdmin = (id, title, path) =>(
     axios.put(`${process.env.REACT_APP_API_URL}/admin/feature`,{
-        id, title,
+        id, title, path,
         type: 'game'
     },
     { 

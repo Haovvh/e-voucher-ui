@@ -403,13 +403,13 @@ export default function PartnerNewPromotion(props) {
         <Col>
         <label>Description</label>
         </Col>
-        <Col>
+        <Col className='col-2'>
         <label>Start</label>
         </Col>
-        <Col>
+        <Col className='col-2'>
         <label>End</label>
         </Col>
-        <Col>
+        <Col className='col-2'>
         <label>Game</label>
         </Col>
       </Row>
@@ -430,7 +430,7 @@ export default function PartnerNewPromotion(props) {
             onChange = {(event) =>{handleChangeDescription(event)}}
           /> 
         </Col>
-        <Col>
+        <Col className='col-2'>
         <Input 
             readOnly={readOnly}
             type='date'
@@ -439,7 +439,7 @@ export default function PartnerNewPromotion(props) {
             />    
             
         </Col>
-        <Col>
+        <Col className='col-2'>
         <Input 
             readOnly={readOnly}
             type='date'
@@ -447,7 +447,7 @@ export default function PartnerNewPromotion(props) {
             onChange = {(event) =>{handleChangeEnd(event)}}          
             />
         </Col>
-        <Col>
+        <Col className='col-2'>
         
         <Form.Control
         readOnly={readOnly}

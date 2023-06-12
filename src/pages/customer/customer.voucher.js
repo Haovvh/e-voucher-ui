@@ -15,10 +15,10 @@ import Row from 'react-bootstrap/Row'
 import Col from "react-bootstrap/Col";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined, UpSquareOutlined , PlusOutlined  } from "@ant-design/icons";
 import notification from "../../utils/notification";
-import AdminService from "../../services/admin.service";
 import customerService from "../../services/customer.service";
+import header from "../../services/header.service";
 
 
 export default function CustomerVoucher () {
@@ -44,6 +44,15 @@ export default function CustomerVoucher () {
         </p>
        ),
     },
+    {
+      title: "VoucherCode",
+      dataIndex: "code  ",
+      render: (text, record) => (
+        <p>
+          {record.code}
+        </p>
+       ), 
+  },
   
     {
       title: "Description",
@@ -64,6 +73,7 @@ export default function CustomerVoucher () {
          ), 
     },
     
+    
     {
       title: "Exp",
       dataIndex: "expDate"      
@@ -74,7 +84,8 @@ export default function CustomerVoucher () {
       render: (record) => {
         return (
           <>
-            <EditOutlined
+            <UpSquareOutlined
+            style={{ color: "blue", marginLeft: 12 }}
               onClick={() => {
                 onEditData(record);
               }}
@@ -120,23 +131,28 @@ export default function CustomerVoucher () {
 
   const handleClickSave = () => { 
     if (email && rewardID) {
-      customerService.putRewardByCustomer(email,rewardID).then(
-        response => {
-          console.log(response.data)
-          if(response.data && response.data.success === true) {
+      if (email.toLocaleLowerCase() !== header.email().toLocaleLowerCase()) {
+        customerService.putRewardByCustomer(email,rewardID).then(
+          response => {
             console.log(response.data)
-            setEmail("")
-            setRewardID("");
-            setShow(false)
-            setIsLoad(!isLoad)
+            if(response.data && response.data.success === true) {
+              alert(notification.SEND_VOUCHER_SUCCESS)
+              setEmail("")
+              setRewardID("");
+              setShow(false)
+              setIsLoad(!isLoad)
+            }
+          }, error =>{
+            if(error.response && error.response.status === 404 && error.response.data && error.response.data.success === false) {
+              alert(notification.ERROR_EMAIL)
+            }
+            console.log(error.response)
           }
-        }, error =>{
-          if(error.response && error.response.status === 404 && error.response.data && error.response.data.success === false) {
-            alert(notification.ERROR_EMAIL)
-          }
-          console.log(error.response)
-        }
-      )
+        )
+      } else {
+        alert(notification.CHECK_EMAIL)
+      }
+      
     } else {
       alert(notification.INPUT);
     }    

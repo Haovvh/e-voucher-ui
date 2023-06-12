@@ -125,7 +125,14 @@ const getPartnerIdByPartner = (id= header.getUserId()) => (
    })
    
 );
-
+const useVoucherByPartner = (code) => (
+    axios.put(`${process.env.REACT_APP_API_URL}/partner/use?code=${code}`,{
+       
+   },{ 
+       headers: header.authHeader() 
+   })
+   
+);
 
 const partnerService = {
     getAllVoucherByPartner,
@@ -144,6 +151,7 @@ const partnerService = {
     putRewardByPartner,
     getPartnerIdByPartner,
     putPartnerByPartner,
-    putPasswordPartnerByPartner
+    putPasswordPartnerByPartner,
+    useVoucherByPartner
 }
 export default partnerService

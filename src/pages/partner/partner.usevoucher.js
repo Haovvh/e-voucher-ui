@@ -6,7 +6,7 @@ import {
   Input
 } from "antd";
 import {
-  SearchOutlined,
+  SearchOutlined, SketchOutlined,
   
 } from "@ant-design/icons";
 
@@ -21,15 +21,17 @@ import partnerService from "../../services/partner.service";
 
 
 
-export default function PartnerVoucher () {
-    
+export default function PartnerUseVoucher () {
+  const [show, setShow] = useState(false);
     const [datas, setDatas] = useState([]);
     const [tempDatas, setTempDatas] = useState([]);
-    
+    const [code, setCode] = useState("")
 
-  const [search, setSearch] = useState("");
+    const handleClickNew = () => {
+      setShow(true)
+    }
   
-  const columns = [       
+  const columns = [        
     
     {
       title: "Title",
@@ -64,38 +66,34 @@ export default function PartnerVoucher () {
        ),
     }  
   ];
-  
-    
-  
-  const handleKeyDown = (e) => {
-    
-    if (e.key === 'Enter') {
-      const tempdatas = tempDatas.filter(e => e.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-      if(tempdatas.length === 0) {
-        const temptempDatas = tempDatas.filter(e => e.description.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-        setDatas(temptempDatas);
-      } else {
-        setDatas(tempdatas)
-      }     
-      
-    }
-  }  
-
-  const onChange = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
-  };
-  const handleChangeSearch = (event) => {        
-    setSearch(event.target.value)
+  const handleClickClose = () => {
+    setShow(false)
+    setCode("")
   }
-  
-
+  const handleChangeCode = (event) => {        
+    setCode(event.target.value)
+  }
+  const handleClickSave = () => {
+    partnerService.useVoucherByPartner(code).then(
+      response =>{
+        if(response.data && response.data.success === true) {
+          alert("Thành công");
+          setShow(false)
+        }
+      }, error => {
+        if(error.response && error.response.data && error.response.status ===400) {
+          alert(notification.WRONG_VOUCHER)
+        }
+      }
+    )
+  }  
     useEffect(()=>{   
       partnerService.getAllVoucherByPartner().then(
         response => {
           if (response.data && response.data.success) {
                   
-            setDatas(response.data.data)
-            setTempDatas(response.data.data)
+            // setDatas(response.data.data)
+            // setTempDatas(response.data.data)
           }
           
         }, error => {
@@ -108,23 +106,18 @@ export default function PartnerVoucher () {
         <React.Fragment>
         <div className="container">
           <header className="jumbotron">
-            <h1>Vouchers</h1> 
-          </header>
+            <h1>Vouchers Is Use</h1> 
+          </header>                        
           <Card>
           <Row>
-              <Col md={3}>
-              <Input
-                value={search}
-                onChange={handleChangeSearch}
-                onKeyDown={handleKeyDown}
-                className="header-search"
-                placeholder="Type here..."
-                prefix={<SearchOutlined />}
-              />
-              </Col>                        
+              
+              <Col  md={{ span: 2, offset: 7 }}>
+              <Button  className='btn  btn-success  ' onClick={handleClickNew}>
+                Use Voucher
+              </Button>  
+              </Col>             
             </Row>
-          </Card>                 
-          
+          </Card>
           <Card
           bordered={false}
           className="criclebox tablespace mb-24"
@@ -137,7 +130,7 @@ export default function PartnerVoucher () {
               columns={columns}
               dataSource={datas}
               pagination={true}
-              onChange={onChange}
+              
               rowKey="id"
               bordered
               className="ant-border-space"
@@ -146,6 +139,32 @@ export default function PartnerVoucher () {
         </Card>          
        
         </div>
+        <Modal show={show} onHide={handleClickClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Voucher</Modal.Title>
+        </Modal.Header>
+        <Modal.Body> 
+          
+          <Form.Group className="mb-3" >
+            <Form.Label>Voucher Code</Form.Label>
+            <Form.Control placeholder="Code" 
+            value={code}
+            required
+            onChange={handleChangeCode} 
+            />        
+          </Form.Group>
+          
+          
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClickClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleClickSave}>
+            Save 
+          </Button>
+        </Modal.Footer>
+      </Modal>
         </React.Fragment>
     )
 }

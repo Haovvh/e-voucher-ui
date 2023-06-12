@@ -20,20 +20,17 @@ import {
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { EditOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import notification from "../../utils/notification";
+
 import AdminService from "../../services/admin.service";
 import AdminViewPromotion from "./admin.viewpromotion";
 
 export default function AdminPromotion () {
-    const [show, setShow] = useState(false);
-    const [isLoad, setIsLoad] = useState(false);
     const [promotionID, setPromotionID] = useState("");
-    const [statusCode, setStatusCode] = useState([]);
+    
     
     const [search, setSearch] = useState("");
     const [promotions, setPromotions] = useState([]);
-    const [tempPromotions, setTempPromotions] = useState([]);
-    const [statusID, setStatusID] = useState("");    
+    const [tempPromotions, setTempPromotions] = useState([]); 
     const [viewPromotion, setViewPromotion] = useState(false)
   const columns = [    
     {
@@ -69,15 +66,15 @@ export default function AdminPromotion () {
       dataIndex: "Status",
       render: (text, record) => {
         if(record.Status === "Pending") {
-          return (<Button className="btn btn-success" onClick={()=> handleEditStatus(record)}> 
+          return (<Button className="btn btn-success" > 
           {record.Status}
         </Button>)
         } else if (record.Status === "Accepted") {
-          return (<Button className="btn btn-primary" onClick={()=> handleEditStatus(record)}> 
+          return (<Button className="btn btn-primary" > 
           {record.Status}
         </Button>)
-        } else {
-          (<Button className="btn btn-warning" onClick={()=> handleEditStatus(record)}> 
+        } else if (record.Status === "Rejected"){
+          return(<Button className="btn btn-warning" > 
         {record.Status}
       </Button>)}
       }   
@@ -102,35 +99,9 @@ export default function AdminPromotion () {
     }
     
   ];
-  const option =  statusCode.map((option) => {
-    return(
-      <option key={option.id} value={option.id}>
-          {option.state}
-      </option>
-    )
-  })
+  
 
-  const handleClickSave = () => { 
-    
-    AdminService.putStatusPromotionByAdmin(promotionID, statusID).then(
-      response => {
-        if(response.data && response.data.success === true) {
-          alert(notification.EDIT)
-          setShow(false);
-          setPromotionID("")
-          setStatusID("");
-          setIsLoad(!isLoad)
-        }
-      }
-    )
-  }
-  const handleClickClose = () => { 
-    setShow(false)
-    setStatusID("")
-  }
-  const handleChangeStatus = (event) => { 
-    setStatusID(event.target.value)
-  }
+  
   const handleKeyDown = (e) => {
     
     if (e.key === 'Enter') {
@@ -148,32 +119,13 @@ export default function AdminPromotion () {
     setSearch(event.target.value)
   }
   
-  const handleEditStatus = (record) => {
-    setPromotionID(record.id)
-    setShow(true)
-    
-  } 
-
   const onEditData = (record) => {
     setPromotionID(record.id)
     setViewPromotion(true)
     
   };
     useEffect(()=>{   
-      AdminService.getAllStatusByAdmin().then(
-        response => {
-          if(response.data && response.data.success === true) {
-            const temp = response.data.data
-            temp.unshift({
-              id:0,
-              state: "Vui lòng chọn trạng thái"
-            })
-            console.log(temp)
-            setStatusCode(temp)
-            
-          }
-        }
-      )
+      
       AdminService.getAllPromotionByAdmin().then(
         response => {
           console.log(response.data)
@@ -188,7 +140,7 @@ export default function AdminPromotion () {
       )
       
       
-    },[isLoad])
+    },[])
     return(
         <React.Fragment>
         <div className="container">
@@ -233,31 +185,7 @@ export default function AdminPromotion () {
             />
           </div>
         </Card> }
-        <Modal show={show} onHide={handleClickClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Status</Modal.Title>
-        </Modal.Header>
-        <Modal.Body> 
-        <label>Voucher</label>
-        <Form.Control
-        as="select" 
-        value={statusID}
-        onChange={handleChangeStatus}
-        >
-          {option}
-      
-      </Form.Control>
-                  
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClickClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleClickSave}>
-            Save 
-          </Button>
-        </Modal.Footer>
-      </Modal>
+       
         </div>
         </React.Fragment>
     )

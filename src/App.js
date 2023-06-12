@@ -12,6 +12,7 @@ import PartnerGame from "./pages/partner/partner.game";
 import PartnerVoucher from "./pages/partner/partner.voucher";
 import PartnerProfile from "./pages/partner/partner.profile";
 import PartnerReport from "./pages/partner/partner.report";
+import PartnerUseVoucher from "./pages/partner/partner.usevoucher";
 
 import AdminPromotion from "./pages/admin/admin.promotion";
 import AdminPartner from "./pages/admin/admin.partner";
@@ -59,7 +60,8 @@ function App() {
           <Route exact path="/partnervoucher" component={isPartner ? PartnerVoucher : NotFound} />
           <Route exact path="/partnerreport" component={isPartner ? PartnerReport : NotFound} />
           <Route exact path="/partnerprofile" component={isPartner ? PartnerProfile : NotFound} />
-
+          <Route exact path="/partnerusevoucher" component={isPartner ? PartnerUseVoucher : NotFound} />
+          
           <Route exact path="/adminpromotion" component={isAdmin ? AdminPromotion : NotFound} />
           <Route exact path="/adminpartner" component={isAdmin ? AdminPartner : NotFound} />
           <Route exact path="/admincustomer" component={isAdmin ? AdminCustomer : NotFound} />

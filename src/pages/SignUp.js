@@ -154,7 +154,7 @@ export default function SignUp () {
                 </Col>
               </Row>
               <Row>
-                <Col>
+                <Col className="col-3">
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Phone  </Form.Label>
                   <Form.Control type="email"  placeholder="Phone" 

@@ -28,7 +28,7 @@ export default function AdminGame () {
     const [title, setTitle] = useState("");   
     const [datas, setDatas] = useState([]);
     const [tempDatas, setTempDatas] = useState([]);
-    
+    const [path, setPath] = useState("");
 
   const [search, setSearch] = useState("");
   
@@ -123,6 +123,9 @@ export default function AdminGame () {
   const handleChangeTitle = (event) => (
     setTitle(event.target.value)
   )
+  const handleChangePath = (event) => (
+    setPath(event.target.value)
+  )
 
  
 
@@ -154,7 +157,7 @@ export default function AdminGame () {
   const handleClickSave = () => { 
     if(title ) {
         if(userId && userId !== "") {
-            AdminService.putGameByAdmin(userId,title).then(
+            AdminService.putGameByAdmin(userId,title, path).then(
                 response => {
                     if(response.data && response.data.success === true) {
                         alert(notification.EDIT)
@@ -167,7 +170,7 @@ export default function AdminGame () {
                 }
             )
         } else {
-            AdminService.postGameByAdmin(title).then(
+            AdminService.postGameByAdmin(title, path).then(
                 response => {
                     if(response.data && response.data.success === true) {
                         alert(notification.CREATE)
@@ -197,7 +200,8 @@ export default function AdminGame () {
         if(response.data && response.data.success) {
 
           const temp = response.data.data
-          setTitle(temp.title)         
+          setTitle(temp.title)   
+          setPath(temp.path)      
           
           setUserId(record.id)
           setShow(true)
@@ -283,7 +287,15 @@ export default function AdminGame () {
             required
             onChange={handleChangeTitle} 
             />        
-          </Form.Group>          
+          </Form.Group>   
+          <Form.Group className="mb-3" >
+            <Form.Label>Path</Form.Label>
+            <Form.Control placeholder="Path" 
+            value={path}
+            required
+            onChange={handleChangePath} 
+            />        
+          </Form.Group>       
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClickClose}>
