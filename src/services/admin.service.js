@@ -43,7 +43,11 @@ const getAllStatusByAdmin = () => (
    })
 );
 
-
+const getAllPromotionFromToByAdmin = (from, to) => (
+    axios.get(`${process.env.REACT_APP_API_URL}/admin/promotion?from=${from}&to=${to}`, { 
+       headers: header.authHeader() 
+   })
+);
 const getAllPromotionByAdmin = () => (
     axios.get(`${process.env.REACT_APP_API_URL}/admin/promotion`, { 
        headers: header.authHeader() 
@@ -221,6 +225,7 @@ const deleteVoucherIdByAdmin = (id) =>(
 
 const AdminService = {
     getAllPromotionByAdminToReport,
+    getAllPromotionFromToByAdmin,
     getAllAdmin,
     getAdminById,    
     putChangePassByAdmin,
