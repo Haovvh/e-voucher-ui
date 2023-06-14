@@ -121,8 +121,13 @@ export default function AdminReport () {
     console.log(record)
     const tempQuan = []
     const tempBalan = [];
+    const useVoucher = [];
     record.Details.map(e=>{
       tempQuan.push({
+        label: e.Voucher.title,
+        y: e.quantity
+      })
+      useVoucher.push({
         label: e.Voucher.title,
         y: e.quantity
       })
@@ -131,11 +136,7 @@ export default function AdminReport () {
         y: e.balanceQty
       })
     })
-    const test = record.Rewards.filter(e => e.isUsed === true);
-    console.log(test)
-
-
-    console.log(tempQuan)
+    
     let uniqueArr = record.Rewards.reduce((unique, item) => {
       return unique.includes(item.voucherID) ? unique : [...unique, item.voucherID];
     }, []);
@@ -156,7 +157,15 @@ export default function AdminReport () {
         y: count
       })
     }
-    setUseVoucher(tempUse)
+    for(let i = 0; i < useVoucher.length ; i++) {
+      useVoucher[i].y=0;
+      for(let j = 0; j < tempUse.length; j++) {
+        if(useVoucher[i].label === tempUse[j].label) {
+          useVoucher[i].y = tempUse[j].y;
+        }
+      }
+    }
+    setUseVoucher(useVoucher)
    
     setQuantities(tempQuan)
     setBalance(tempBalan);

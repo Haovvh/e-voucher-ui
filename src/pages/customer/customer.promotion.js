@@ -18,7 +18,7 @@ import {
   Select
 } from "antd";
 import Form from 'react-bootstrap/Form';
-import Modal from 'react-bootstrap/Modal';
+
 import { EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import notification from "../../utils/notification";
 import customerService from "../../services/customer.service";
