@@ -16,8 +16,8 @@ export default function CustomerPlayGame (props) {
           <header className="jumbotron">
             
           </header>
-          {(props.game === 'gamepokemon') && <GamePokemon show={props.show} id={props.id}/>}
-          {(props.game === 'game2048') && <Game2048 show={props.show} id={props.id}/>}         
+          {(props.game === 'gamepokemon') && <GamePokemon partner={props.partner} show={props.show} id={props.id}/>}
+          {(props.game === 'game2048') && <Game2048 partner={props.partner} show={props.show} id={props.id}/>}         
           </div>
         </React.Fragment>
     )

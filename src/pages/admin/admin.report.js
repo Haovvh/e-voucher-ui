@@ -22,6 +22,7 @@ import Modal from 'react-bootstrap/Modal';
 import { EditOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import notification from "../../utils/notification";
 import AdminService from "../../services/admin.service";
+import ReportDetail from './admin.reportdetail'
 
 export default function AdminReport () {
     const [show, setShow] = useState(false);
@@ -33,7 +34,12 @@ export default function AdminReport () {
     const [promotions, setPromotions] = useState([]);
     const [tempPromotions, setTempPromotions] = useState([]);
     const [statusID, setStatusID] = useState("");    
-    
+    const [details, setDetails] = useState([]);
+    const [totalCustomer, setTotalCustomer] = useState("");
+    const [showDetail, setShowDetail] = useState(false)
+    const [quantities, setQuantities] = useState([])
+    const [balance, setBalance] = useState([])
+    const [useVoucher, setUseVoucher] = useState([])
   const columns = [
     
     {
@@ -54,28 +60,7 @@ export default function AdminReport () {
        ),    
       
     },
-    {
-      title: "Total Voucher",
-      dataIndex: "Details",
-      render: (text, record) => {
-        let temp = 0;
-        record.Details.map(e=>{
-          temp += parseInt(e.quantity,10)
-        })
-        return temp
-      } 
-    },
-    {
-      title: "Balance Quantity",
-      dataIndex: "Details",
-      render: (text, record) => {
-        let temp = 0;
-        record.Details.map(e=>{
-          temp += parseInt(e.balanceQty,10)
-        })
-        return temp
-      } 
-    },
+    
     {
       title: "Start",
       dataIndex: "start",
@@ -86,11 +71,7 @@ export default function AdminReport () {
       dataIndex: "end",
       
     },
-    {
-      title: "Total Customer Join",
-      dataIndex: "Participations",
-      
-    },
+    
     {
       title: "Status",
       dataIndex: "Status"
@@ -115,35 +96,9 @@ export default function AdminReport () {
     }
     
   ];
-  const option =  statusCode.map((option) => {
-    return(
-      <option key={option.id} value={option.id}>
-          {option.state}
-      </option>
-    )
-  })
+  
 
-  const handleClickSave = () => { 
-    
-    AdminService.putStatusPromotionByAdmin(promotionID, statusID).then(
-      response => {
-        if(response.data && response.data.success === true) {
-          alert(notification.EDIT)
-          setShow(false);
-          setPromotionID("")
-          setStatusID("");
-          setIsLoad(!isLoad)
-        }
-      }
-    )
-  }
-  const handleClickClose = () => { 
-    setShow(false)
-    setStatusID("")
-  }
-  const handleChangeStatus = (event) => { 
-    setStatusID(event.target.value)
-  }
+  
   const handleKeyDown = (e) => {
     
     if (e.key === 'Enter') {
@@ -161,38 +116,54 @@ export default function AdminReport () {
     setSearch(event.target.value)
   }
   
-  const handleEditStatus = (record) => {
-    setPromotionID(record.id)
-    setShow(true)
-    
-  } 
-
-  const onDeleteData = (record) => {
-    
-    const id = record.id
-    const title = record.title;
-    
-    if(window.confirm(notification.CONFIRM_DELETE)){
-      AdminService.deletePromotionByAdmin(id).then(
-        response => {
-          if(response.data && response.data.success) {
-            alert(notification.DELETE);
-            setIsLoad(!isLoad);
-          }
-          
-        }, error => {
-          console.log(error)
-        }
-      )     
-    }    
-  };
-
   
   const onEditData = (record) => { 
+    console.log(record)
+    const tempQuan = []
+    const tempBalan = [];
+    record.Details.map(e=>{
+      tempQuan.push({
+        label: e.Voucher.title,
+        y: e.quantity
+      })
+      tempBalan.push({
+        label: e.Voucher.title,
+        y: e.balanceQty
+      })
+    })
+    const test = record.Rewards.filter(e => e.isUsed === true);
+    console.log(test)
 
+
+    console.log(tempQuan)
+    let uniqueArr = record.Rewards.reduce((unique, item) => {
+      return unique.includes(item.voucherID) ? unique : [...unique, item.voucherID];
+    }, []);
+    let tempUse = [];
+    for(let i = 0; i< uniqueArr.length; i++) {
+      let count = 0;
+      let title = "";
+      for(let j = 0; j < record.Rewards.length ; j++){
+        if(record.Rewards[j].voucherID === uniqueArr[i]) {
+          title = record.Rewards[j].Voucher;
+          if(record.Rewards[j].isUsed === true){
+            count++;            
+          }
+        }          
+      }
+      tempUse.push({
+        label: title,
+        y: count
+      })
+    }
+    setUseVoucher(tempUse)
+   
+    setQuantities(tempQuan)
+    setBalance(tempBalan);
     setPromotionID(record.id)
-    setShow(true)
-    
+    setTotalCustomer(record.Participations)
+    setDetails(record.Details)
+    setShowDetail(true);
   };
     useEffect(()=>{   
       
@@ -217,7 +188,14 @@ export default function AdminReport () {
         <div className="container">
           <header className="jumbotron">
             <h1>Reports </h1> 
-          </header>
+          </header> 
+          { showDetail && <Card>
+          <ReportDetail customer={totalCustomer} quanti={quantities} use={useVoucher} balan={balance} />
+          </Card>}
+          
+          {!showDetail  && 
+          <>
+          
           <Card>
           <Row>
               <Col md={6}>
@@ -252,32 +230,9 @@ export default function AdminReport () {
               className="ant-border-space"
             />
           </div>
-        </Card>
-        <Modal show={show} onHide={handleClickClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Status</Modal.Title>
-        </Modal.Header>
-        <Modal.Body> 
-        <label>Voucher</label>
-        <Form.Control
-        as="select" 
-        value={statusID}
-        onChange={handleChangeStatus}
-        >
-          {option}
-      
-      </Form.Control>
-                  
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClickClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleClickSave}>
-            Save 
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          
+        </Card>        
+      </>}
         </div>
         </React.Fragment>
     )

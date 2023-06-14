@@ -18,6 +18,7 @@ export default function GamePokemon (props) {
   const [cards, setCards] = useState([]);
   const [clicks, setClicks] = useState(0);
   const [promotionID, setPromotionID] = useState("");  
+  const [partnerID, setPartnerID] = useState("");
   const [voucherListId, setVoucherListId] = useState([])
   const voucherListID = [];
 
@@ -58,7 +59,7 @@ export default function GamePokemon (props) {
                 }
             }
         )
-        customerService.postRewardByCustomer(promotionID,id).then(
+        customerService.postRewardByCustomer(promotionID,id, partnerID).then(
             response => {
                 if(response.data && response.data.success === true) {
                     alert(notification.VOUCHER_SUCCESS)
@@ -82,7 +83,7 @@ export default function GamePokemon (props) {
         )
       }
       
-    }, 1000)
+    }, 700)
   };
 
   const initGame = () => {
@@ -121,12 +122,13 @@ export default function GamePokemon (props) {
   }
 
   useEffect(() => {
-    if(props.id && props.id != "" && props.show === true) {
+    if(props.id && props.id != "" && props.show === true && props.partner) {
         customerService.getPromotionIdByCustomer(props.id).then(
             response => {
                 if(response.data && response.data.success === true) {
                     const temp = response.data.data
                     setPromotionID(temp.id)
+                    setPartnerID(props.partner)
                     for(let i = 0; i< temp.Details.length; i++) {
                         if(temp.Details[i].balanceQty>0) {
                             voucherListID.push(temp.Details[i].Voucher.id)

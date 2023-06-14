@@ -13,6 +13,7 @@ export default function Game2048(props) {
     const [score, setScore] = useState(0)
 	const [promotionID, setPromotionID] = useState("");  
   	const [voucherListId, setVoucherListId] = useState([])
+    const [partnerID, setPartnerID] = useState("");
 	const voucherListID = [];
     function handleMove(x, y) {
         let f = move(field, x, y);
@@ -33,7 +34,7 @@ export default function Game2048(props) {
 							}
 						}
 					)
-					customerService.postRewardByCustomer(promotionID,id).then(
+					customerService.postRewardByCustomer(promotionID,id, partnerID).then(
 						response => {
 							if(response.data && response.data.success === true) {
 								alert(notification.VOUCHER_SUCCESS)
@@ -82,11 +83,12 @@ export default function Game2048(props) {
 
     useEffect(() => {
 
-		if(props.id && props.id != "" && props.show === true) {
+		if(props.id && props.id != "" && props.show === true && props.partner) {
 			customerService.getPromotionIdByCustomer(props.id).then(
 				response => {
 					if(response.data && response.data.success === true) {
 						const temp = response.data.data
+                        setPartnerID(props.partner)
 						setPromotionID(temp.id)
 						for(let i = 0; i< temp.Details.length; i++) {
 							if(temp.Details[i].balanceQty>0) {

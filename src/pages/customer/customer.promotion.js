@@ -35,7 +35,7 @@ export default function CustomerPromotion () {
     const [isPlayGame, setIsPlayGame] = useState(false)
     const [categories, setCategories] = useState([])
     const [showNew, setShowNew] = useState(false)
-
+    const [partnerID, setPartnerID] = useState("");
     const [categoryId, setCategoryId] = useState("");
 
   const columns = [
@@ -126,11 +126,10 @@ export default function CustomerPromotion () {
   }
   
   const handleClickJoin = (record) => {
-    
     setGameName(record.Game.path)
     setPromotionID(record.id)
     setIsPlayGame(true)
-    
+    setPartnerID(record.Partner.id)
   } 
 
     useEffect(()=>{   
@@ -142,6 +141,7 @@ export default function CustomerPromotion () {
               response => {
                 if(response.data && response.data.success === true) {
                   const temp = response.data.data
+                  console.log(temp)
                   setPromotions(temp)            
                 }
               }
@@ -158,7 +158,6 @@ export default function CustomerPromotion () {
               id: 0,
               type: "Vui lòng chọn"
             })
-            console.log(temp)
             setCategories(temp)
           }
         }
@@ -167,7 +166,8 @@ export default function CustomerPromotion () {
     },[isLoad])
     return(
         <React.Fragment>
-          {(isPlayGame && promotionID !== "") ? <CustomerPlayGame game={gameName} show={isPlayGame} id={promotionID}/> :
+          {(isPlayGame && promotionID !== "") ? 
+          <CustomerPlayGame game={gameName} show={isPlayGame} id={promotionID} partner={partnerID}/> :
         <div className="container">
           <header className="jumbotron">
             <h1>Promotions </h1> 

@@ -132,7 +132,7 @@ export default function AdminGame () {
   const clearScreen = () => {
     setTitle("");    
     setUserId("");
-    
+    setPath("");
   }
   const handleKeyDown = (e) => {
     

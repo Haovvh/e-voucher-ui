@@ -74,9 +74,9 @@ const getAllRewardByCustomer = (id =header.getUserId() ) =>(
     })
 );
 
-const postRewardByCustomer = ( promotionID, voucherID, customerID = header.getUserId()  ) =>(
+const postRewardByCustomer = ( promotionID, voucherID,partnerID, customerID = header.getUserId()  ) =>(
     axios.post(`${process.env.REACT_APP_API_URL}/customer/reward`, {
-        customerID, promotionID, voucherID
+        customerID, promotionID, voucherID, partnerID
     }, { 
         headers: header.authHeader() 
     })

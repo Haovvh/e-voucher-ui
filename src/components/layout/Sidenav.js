@@ -345,7 +345,7 @@ function Sidenav({ color }) {
         </Menu.Item>
       }
       { isPartner &&       
-        <Menu.Item key="23">
+        <Menu.Item key="24">
           <NavLink to="/partnerusevoucher">
             <span
               className="icon"
@@ -360,7 +360,7 @@ function Sidenav({ color }) {
         </Menu.Item>
       }
       { isPartner &&       
-        <Menu.Item key="24">
+        <Menu.Item key="25">
           <NavLink to="/partnergame">
             <span
               className="icon"
@@ -375,7 +375,7 @@ function Sidenav({ color }) {
         </Menu.Item>
       }
       { isPartner &&       
-        <Menu.Item key="25">
+        <Menu.Item key="26">
           <NavLink to="/partnerreport">
             <span
               className="icon"
