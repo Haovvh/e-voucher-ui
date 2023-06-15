@@ -236,17 +236,19 @@ export default function AdminGame () {
           </header>
           <Card>
           <Row>
-              <Col md={2}>
-              <Input
+          <Col md={{ span: 3, offset: 0 }}>   
+              <Form.Group  >
+                <Form.Control 
                 value={search}
                 onChange={handleChangeSearch}
                 onKeyDown={handleKeyDown}
                 className="header-search"
                 placeholder="Type here..."
-                prefix={<SearchOutlined />}
-              />
-              </Col> 
-              <Col  md={{ span: 2, offset: 8 }}>
+                />        
+              </Form.Group>             
+              
+              </Col>
+              <Col  md={{ span: 2, offset: 6 }}>
               <Button  className='btn  btn-success  ' onClick={handleClickNew}>
                 New Game
               </Button>  

@@ -44,7 +44,7 @@ const getAllStatusByAdmin = () => (
 );
 
 const getAllPromotionFromToByAdmin = (from, to) => (
-    axios.get(`${process.env.REACT_APP_API_URL}/admin/promotion?from=${from}&to=${to}`, { 
+    axios.get(`${process.env.REACT_APP_API_URL}/admin/promotion/statistic?from=${from}&to=${to}`, { 
        headers: header.authHeader() 
    })
 );

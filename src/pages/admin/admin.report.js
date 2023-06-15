@@ -18,28 +18,25 @@ import {
   Select
 } from "antd";
 import Form from 'react-bootstrap/Form';
-import Modal from 'react-bootstrap/Modal';
 import { EditOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import notification from "../../utils/notification";
 import AdminService from "../../services/admin.service";
-import ReportDetail from './admin.reportdetail'
+import ReportDetail from '../report.detail'
 
 export default function AdminReport () {
-    const [show, setShow] = useState(false);
-    const [isLoad, setIsLoad] = useState(false);
-    const [promotionID, setPromotionID] = useState("");
-    const [statusCode, setStatusCode] = useState([]);
-    
+    const [title, setTitle] = useState("");
     const [search, setSearch] = useState("");
     const [promotions, setPromotions] = useState([]);
     const [tempPromotions, setTempPromotions] = useState([]);
-    const [statusID, setStatusID] = useState("");    
-    const [details, setDetails] = useState([]);
+    
     const [totalCustomer, setTotalCustomer] = useState("");
     const [showDetail, setShowDetail] = useState(false)
     const [quantities, setQuantities] = useState([])
     const [balance, setBalance] = useState([])
     const [useVoucher, setUseVoucher] = useState([])
+    const [noUseVou, setNoUseVou] = useState([])
+    const [searchDateFrom, setSearchDateFrom]= useState("");
+    const [searchDateTo, setSearchDateTo]= useState("");
   const columns = [
     
     {
@@ -104,8 +101,8 @@ export default function AdminReport () {
     if (e.key === 'Enter') {
       const tempDataTitle = tempPromotions.filter(e => e.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
       if(tempDataTitle.length === 0) {
-        const tempDataStatus = tempPromotions.filter(e => e.Status.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-        setPromotions(tempDataStatus);
+        const tempDataDescription = tempPromotions.filter(e => e.description.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+        setPromotions(tempDataDescription);
       } else {
         setPromotions(tempDataTitle)
       }     
@@ -119,9 +116,11 @@ export default function AdminReport () {
   
   const onEditData = (record) => { 
     console.log(record)
+    setTitle(record.title)
     const tempQuan = []
     const tempBalan = [];
     const useVoucher = [];
+    const noUseVoucher = [];
     record.Details.map(e=>{
       tempQuan.push({
         label: e.Voucher.title,
@@ -132,6 +131,10 @@ export default function AdminReport () {
         y: e.quantity
       })
       tempBalan.push({
+        label: e.Voucher.title,
+        y: e.balanceQty
+      })
+      noUseVoucher.push({
         label: e.Voucher.title,
         y: e.balanceQty
       })
@@ -165,15 +168,43 @@ export default function AdminReport () {
         }
       }
     }
-    setUseVoucher(useVoucher)
-   
+    for(let i = 0 ; i< tempBalan.length; i++) {
+      noUseVoucher[i].y = tempQuan[i].y- tempBalan[i].y - useVoucher[i].y
+    }
+    setNoUseVou(noUseVoucher)
+    setUseVoucher(useVoucher)   
     setQuantities(tempQuan)
     setBalance(tempBalan);
-    setPromotionID(record.id)
     setTotalCustomer(record.Participations)
-    setDetails(record.Details)
+    
     setShowDetail(true);
   };
+  const handleClickSearch = () => {
+    if(searchDateFrom && searchDateTo) {
+      AdminService.getAllPromotionFromToByAdmin(searchDateFrom, searchDateTo).then(
+        response =>{
+          if(response.data && response.data.success) {
+            const temp = response.data.data;
+            setPromotions(temp)
+            setTempPromotions(temp)
+          }
+        }
+      )
+    } else {
+      alert(notification.INPUT)
+    }
+    
+  }
+
+  const handleChangeSearchFrom =(event) => {
+    
+    setSearchDateFrom(event.target.value)
+  }
+  const handleChangeSearchTo =(event) => {
+    setSearchDateTo(event.target.value)
+  }
+
+
     useEffect(()=>{   
       
       AdminService.getAllPromotionByAdminToReport().then(
@@ -191,15 +222,20 @@ export default function AdminReport () {
       )
       
       
-    },[isLoad])
+    },[])
     return(
         <React.Fragment>
-        <div className="container">
+        <div className="container"> 
+        {!showDetail ?  
           <header className="jumbotron">
             <h1>Reports </h1> 
-          </header> 
+          </header> : 
+          <header className="jumbotron">
+          <h1>Chiến dịch {title}</h1> 
+        </header>
+          }
           { showDetail && <Card>
-          <ReportDetail customer={totalCustomer} quanti={quantities} use={useVoucher} balan={balance} />
+          <ReportDetail customer={totalCustomer} quanti={quantities} use={useVoucher} balan={balance}  noUseVoucher={noUseVou}/>
           </Card>}
           
           {!showDetail  && 
@@ -207,16 +243,64 @@ export default function AdminReport () {
           
           <Card>
           <Row>
-              <Col md={6}>
-              <Input
+          <Col md={{ span: 4, offset: 0 }}> 
+            </Col>
+            <Col md={{ span: 4, offset: 1 }}> 
+            <label>From</label>
+            </Col>
+            <Col md={{ span: 4, offset: 1 }}> 
+            <label>To</label>
+            </Col>
+            <Col>
+            </Col>
+
+          </Row>
+          <Row>
+          <Col md={{ span: 4, offset: 0 }}>   
+              <Form.Group  >
+              
+                <Form.Control 
                 value={search}
                 onChange={handleChangeSearch}
                 onKeyDown={handleKeyDown}
-                className="header-search"
-                placeholder="Type here..."
-                prefix={<SearchOutlined />}
-              />
+                placeholder="Type here..."               
+                
+                />        
+              </Form.Group>             
+              
               </Col>
+          <Col md={{ span: 4, offset: 1 }}>   
+          
+              <Form.Group  >
+              
+                <Form.Control 
+                
+                value={searchDateFrom}   
+                type='date'
+                onChange={(event) => handleChangeSearchFrom(event)}
+                />        
+              </Form.Group>             
+              
+              </Col>
+              <Col md={{ span: 4, offset: 1 }}>   
+          
+              <Form.Group  >
+              
+                <Form.Control 
+                
+                value={searchDateTo}   
+                type='date'
+                onChange={(event) => handleChangeSearchTo(event)}
+                />        
+              </Form.Group>             
+              
+              </Col>
+              <Col md={{ span: 2, offset: 1 }}>
+              <Button className="btn btn-success" onClick={handleClickSearch}>
+                Search
+              </Button>
+              </Col> 
+              
               
             </Row>
           </Card>

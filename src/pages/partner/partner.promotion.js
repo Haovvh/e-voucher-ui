@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from "react";
 import Button from 'react-bootstrap/Button';
 import {
-  Row,
-  Col,
+  
+  
   Card,
   Radio,
   Table,
@@ -13,9 +13,12 @@ import {
   Space,
   Tag,  
   Typography,
-  Form,
+  
   Input,  
 } from "antd";
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row'
+import Col from "react-bootstrap/Col";
 import { EditOutlined, EyeOutlined, DeleteOutlined, SearchOutlined, FolderViewOutlined } from "@ant-design/icons";
 
 import partnerService from "../../services/partner.service";
@@ -196,15 +199,17 @@ export default function PartnerPromotion () {
           
           <Card>
           <Row>
-              <Col md={6}>
-              <Input
+          <Col md={{ span: 3, offset: 0 }}>   
+              <Form.Group  >
+                <Form.Control 
                 value={search}
                 onChange={handleChangeSearch}
                 onKeyDown={handleKeyDown}
                 className="header-search"
                 placeholder="Type here..."
-                prefix={<SearchOutlined />}
-              />
+                />        
+              </Form.Group>             
+              
               </Col>
               <Col  md={{ span: 3, offset: 15 }}>
               <Button  className='btn btn-success ' onClick={handleClickNew}>

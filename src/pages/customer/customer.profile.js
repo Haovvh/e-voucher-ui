@@ -21,7 +21,6 @@ import Modal from 'react-bootstrap/Modal';
 
 import notification from "../../utils/notification";
 import goongService from "../../services/goong.service";
-import partnerService from "../../services/partner.service";
 import customerService from "../../services/customer.service";
 
 export default function CustomerProfile () {

@@ -23,10 +23,10 @@ import partnerService from "../../services/partner.service";
 
 export default function PartnerVoucher () {
     
-    const [datas, setDatas] = useState([]);
-    const [tempDatas, setTempDatas] = useState([]);
-    
-
+  const [show, setShow] = useState(false);
+  const [datas, setDatas] = useState([]);
+  const [tempDatas, setTempDatas] = useState([]);
+  const [code, setCode] = useState("")
   const [search, setSearch] = useState("");
   
   const columns = [       
@@ -80,6 +80,37 @@ export default function PartnerVoucher () {
       
     }
   }  
+  const handleClickNew = () => {
+    setShow(true)
+  }
+  const handleClickClose = () => {
+    setShow(false)
+    setCode("")
+  }
+  const handleChangeCode = (event) => {        
+    setCode(event.target.value)
+  }
+  const handleClickSave = () => {
+    if(code) {
+      partnerService.useVoucherByPartner(code).then(
+        response =>{
+          if(response.data && response.data.success === true) {
+            console.log(response.data)
+            alert(notification.USE_VOUCHER);
+            setShow(false)
+            setCode("");
+          }
+        }, error => {
+          if(error.response && error.response.data && error.response.status ===400) {
+            alert(notification.WRONG_VOUCHER)
+          }
+        }
+      )
+    } else {
+      alert(notification.INPUT)
+    }
+    
+  } 
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
@@ -112,18 +143,26 @@ export default function PartnerVoucher () {
           </header>
           <Card>
           <Row>
-              <Col md={3}>
-              <Input
+          <Col md={{ span: 3, offset: 0 }}>   
+              <Form.Group  >
+                <Form.Control 
                 value={search}
                 onChange={handleChangeSearch}
                 onKeyDown={handleKeyDown}
                 className="header-search"
                 placeholder="Type here..."
-                prefix={<SearchOutlined />}
-              />
-              </Col>                        
+                />        
+              </Form.Group>             
+              
+              </Col>
+              <Col  md={{ span: 2, offset: 7 }}>
+              <Button  className='btn  btn-success  ' onClick={handleClickNew}>
+                Use Voucher
+              </Button>  
+              </Col>             
             </Row>
-          </Card>                 
+          </Card>
+                         
           
           <Card
           bordered={false}
@@ -146,6 +185,32 @@ export default function PartnerVoucher () {
         </Card>          
        
         </div>
+        <Modal show={show} onHide={handleClickClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Voucher</Modal.Title>
+        </Modal.Header>
+        <Modal.Body> 
+          
+          <Form.Group className="mb-3" >
+            <Form.Label>Voucher Code</Form.Label>
+            <Form.Control placeholder="Code" 
+            value={code}
+            required
+            onChange={handleChangeCode} 
+            />        
+          </Form.Group>
+          
+          
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClickClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleClickSave}>
+            Save 
+          </Button>
+        </Modal.Footer>
+      </Modal>
         </React.Fragment>
     )
 }

@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
 import Button from 'react-bootstrap/Button';
-
 import {
   Row,
   Col,
@@ -14,33 +13,37 @@ import {
   Space,
   Tag,  
   Typography,
-  Form,
-  Input
+  
+  Input,
+  Select
 } from "antd";
-import {  EyeOutlined , SearchOutlined } from "@ant-design/icons";
-
-import partnerService from "../../services/partner.service";
-import PartnerReportDetail from "./partner.reportpromotion";
-
-import header from "../../services/header.service";
+import Form from 'react-bootstrap/Form';
+import { EditOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import notification from "../../utils/notification";
 
+import partnerService from "../../services/partner.service";
+import ReportDetail from '../report.detail'
+
 export default function PartnerReport () {
-    const [show, setShow] = useState(false);
-    const [isLoad, setIsLoad] = useState(false);
-    const [promotionID, setPromotionID] = useState("");
-    const handleClickNew = () => {
-      setShow(true)
-    }
+    const [title, setTitle] = useState("");
+    const [search, setSearch] = useState("");
     const [promotions, setPromotions] = useState([]);
     const [tempPromotions, setTempPromotions] = useState([]);
-    const [search, setSearch] = useState("");
-    const [readOnly, setReadOnly] = useState(false);
     
+    const [totalCustomer, setTotalCustomer] = useState("");
+    const [showDetail, setShowDetail] = useState(false)
+    const [quantities, setQuantities] = useState([])
+    const [balance, setBalance] = useState([])
+    const [useVoucher, setUseVoucher] = useState([])
+    const [noUseVou, setNoUseVou] = useState([])
+    const [searchDateFrom, setSearchDateFrom]= useState("");
+    const [searchDateTo, setSearchDateTo]= useState("");
   const columns = [
-        {
+    
+    {
       title: "TITLE",
       dataIndex: "title",      
+     
     },
     {
       title: "DESCRIPTION",
@@ -50,8 +53,12 @@ export default function PartnerReport () {
     {
       title: "Game",
       dataIndex: "Game",
+      render: (text, record) => (
+        <p>{record.Game.title}</p>
+       ),    
       
     },
+    
     {
       title: "Start",
       dataIndex: "start",
@@ -62,51 +69,34 @@ export default function PartnerReport () {
       dataIndex: "end",
       
     },
-    {
-      title: "Total Customer Join",
-      dataIndex: "Participations",
-      
-    },
+    
     {
       title: "Status",
-      dataIndex: "Status",
-      render: (text, record) => {
-        if(record.Status === "Pending") {
-          return (<Button className="btn btn-success" > 
-          {record.Status}
-        </Button>)
-        } else if (record.Status === "Accepted") {
-          return (<Button className="btn btn-primary" > 
-          {record.Status}
-        </Button>)
-        } else {
-          (<Button className="btn btn-warning" > 
-        {record.Status}
-      </Button>)}
-      }
+      dataIndex: "Status"
       
     },
     {
       title: "Actions",
       key: 'action',      
-      render: (record) => {        
-          return (
-            <>
-              <EyeOutlined
-              style={{ color: "red", marginLeft: 12 }}
-                onClick={() => {
-                  onViewData(record);
-                }}
-              />              
-            </>
-          );       
-        
+      render: (record) => {
+        return (
+          <>
+            <EyeOutlined
+            style={{ color: "red", marginLeft: 12 }}
+              onClick={() => {
+                onEditData(record);
+              }}
+            />
+          </>
+        );
       },    
   
     }
     
   ];
+  
 
+  
   const handleKeyDown = (e) => {
     
     if (e.key === 'Enter') {
@@ -116,74 +106,210 @@ export default function PartnerReport () {
         setPromotions(tempDataDescription);
       } else {
         setPromotions(tempDataTitle)
-      }
-      
-      
+      }     
     }
   }
-  
   const handleChangeSearch = (event) => {    
     
     setSearch(event.target.value)
   }
-
   
-  const onViewData = (record) => { 
-    setPromotionID(record.id)
-    setShow(true)    
-    setReadOnly(true)
+  
+  const onEditData = (record) => { 
+    console.log(record)
+    setTitle(record.title)
+    const tempQuan = []
+    const tempBalan = [];
+    const useVoucher = [];
+    const noUseVoucher = [];
+    record.Details.map(e=>{
+      tempQuan.push({
+        label: e.Voucher.title,
+        y: e.quantity
+      })
+      useVoucher.push({
+        label: e.Voucher.title,
+        y: e.quantity
+      })
+      tempBalan.push({
+        label: e.Voucher.title,
+        y: e.balanceQty
+      })
+      noUseVoucher.push({
+        label: e.Voucher.title,
+        y: e.balanceQty
+      })
+    })
+    
+    let uniqueArr = record.Rewards.reduce((unique, item) => {
+      return unique.includes(item.voucherID) ? unique : [...unique, item.voucherID];
+    }, []);
+    let tempUse = [];
+    for(let i = 0; i< uniqueArr.length; i++) {
+      let count = 0;
+      let title = "";
+      for(let j = 0; j < record.Rewards.length ; j++){
+        if(record.Rewards[j].voucherID === uniqueArr[i]) {
+          title = record.Rewards[j].Voucher;
+          if(record.Rewards[j].isUsed === true){
+            count++;            
+          }
+        }          
+      }
+      tempUse.push({
+        label: title,
+        y: count
+      })
+    }
+    for(let i = 0; i < useVoucher.length ; i++) {
+      useVoucher[i].y=0;
+      for(let j = 0; j < tempUse.length; j++) {
+        if(useVoucher[i].label === tempUse[j].label) {
+          useVoucher[i].y = tempUse[j].y;
+        }
+      }
+    }
+    for(let i = 0 ; i< tempBalan.length; i++) {
+      noUseVoucher[i].y = tempQuan[i].y- tempBalan[i].y - useVoucher[i].y
+    }
+    setNoUseVou(noUseVoucher)
+    setUseVoucher(useVoucher)   
+    setQuantities(tempQuan)
+    setBalance(tempBalan);
+    setTotalCustomer(record.Participations)
+    
+    setShowDetail(true);
   };
+  const handleClickSearch = () => {
+    // if(searchDateFrom && searchDateTo) {
+    //   AdminService.getAllPromotionFromToByAdmin(searchDateFrom, searchDateTo).then(
+    //     response =>{
+    //       if(response.data && response.data.success) {
+    //         const temp = response.data.data;
+    //         setPromotions(temp)
+    //         setTempPromotions(temp)
+    //       }
+    //     }
+    //   )
+    // } else {
+    //   alert(notification.INPUT)
+    // }
+    
+  }
+
+  const handleChangeSearchFrom =(event) => {
+    
+    setSearchDateFrom(event.target.value)
+  }
+  const handleChangeSearchTo =(event) => {
+    setSearchDateTo(event.target.value)
+  }
+
+
     useEffect(()=>{   
-      partnerService.getAllPromotionByPartner(header.getUserId()).then(
+      partnerService.getAllPromotionByPartnerToReport().then(
         response => {
-          
-          if (response.data && response.data.success) {  
-            const temp = response.data.data  
-            console.log(temp)          
-            setTempPromotions(temp)
+          if (response.data && response.data.success) {
+            const temp = response.data.data
+            console.log(temp)
             setPromotions(temp)
+            setTempPromotions(temp)
           }
           
         }, error => {
           console.log(error)
         }
       )
-    },[isLoad])
+      
+      
+    },[])
     return(
         <React.Fragment>
-        <div className="container">
+        <div className="container"> 
+        {!showDetail ?  
           <header className="jumbotron">
-            <h1>Promotions </h1> 
-          </header>
-          {!show && (
+            <h1>Reports </h1> 
+          </header> : 
+          <header className="jumbotron">
+          <h1>Chiến dịch {title}</h1> 
+        </header>
+          }
+          { showDetail && <Card>
+          <ReportDetail customer={totalCustomer} quanti={quantities} use={useVoucher} balan={balance}  noUseVoucher={noUseVou}/>
+          </Card>}
+          
+          {!showDetail  && 
+          <>
+          
           <Card>
           <Row>
-              <Col md={6}>
-              <Input
+          <Col md={{ span: 4, offset: 0 }}> 
+            </Col>
+            <Col md={{ span: 4, offset: 1 }}> 
+            <label>From</label>
+            </Col>
+            <Col md={{ span: 4, offset: 1 }}> 
+            <label>To</label>
+            </Col>
+            <Col>
+            </Col>
+
+          </Row>
+          <Row>
+          <Col md={{ span: 4, offset: 0 }}>   
+              <Form.Group  >
+              
+                <Form.Control 
                 value={search}
                 onChange={handleChangeSearch}
                 onKeyDown={handleKeyDown}
-                className="header-search"
-                placeholder="Type here..."
-                prefix={<SearchOutlined />}
-              />
+                placeholder="Type here..."               
+                
+                />        
+              </Form.Group>             
+              
               </Col>
-              <Col  md={{ span: 3, offset: 15 }}>
-              <Button  className='btn btn-success ' onClick={handleClickNew}>
-            New
-          </Button>
+          <Col md={{ span: 4, offset: 1 }}>   
+          
+              <Form.Group  >
+              
+                <Form.Control 
+                
+                value={searchDateFrom}   
+                type='date'
+                onChange={(event) => handleChangeSearchFrom(event)}
+                />        
+              </Form.Group>             
+              
               </Col>
+              <Col md={{ span: 4, offset: 1 }}>   
+          
+              <Form.Group  >
+              
+                <Form.Control 
+                
+                value={searchDateTo}   
+                type='date'
+                onChange={(event) => handleChangeSearchTo(event)}
+                />        
+              </Form.Group>             
+              
+              </Col>
+              <Col md={{ span: 2, offset: 1 }}>
+              <Button className="btn btn-success" onClick={handleClickSearch}>
+                Search
+              </Button>
+              </Col> 
+              
+              
             </Row>
-          </Card>)}
+          </Card>
           
           
-          <PartnerReportDetail id={promotionID} show={show} view={readOnly}/>
-          {show ? <></> : 
           <Card
           bordered={false}
           className="criclebox tablespace mb-24"
-          
-          
+                    
           >
             <div className="table-responsive">
             
@@ -197,9 +323,9 @@ export default function PartnerReport () {
               className="ant-border-space"
             />
           </div>
-        </Card>
-          }
           
+        </Card>        
+      </>}
         </div>
         </React.Fragment>
     )

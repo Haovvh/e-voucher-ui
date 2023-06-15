@@ -343,22 +343,7 @@ function Sidenav({ color }) {
             <span className="label">Voucher</span>
           </NavLink>
         </Menu.Item>
-      }
-      { isPartner &&       
-        <Menu.Item key="24">
-          <NavLink to="/partnerusevoucher">
-            <span
-              className="icon"
-              style={{
-                background: page === "partnerusevoucher" ? color : "",
-              }}
-            >
-              {heart}
-            </span>
-            <span className="label">Use Voucher</span>
-          </NavLink>
-        </Menu.Item>
-      }
+      }      
       { isPartner &&       
         <Menu.Item key="25">
           <NavLink to="/partnergame">

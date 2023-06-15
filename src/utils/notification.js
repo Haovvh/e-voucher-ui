@@ -20,6 +20,7 @@ const LIMIT_VOUCHER = "Bạn đã nhận đủ voucher. Vui lòng tham gia Chi�
 const WRONG_VOUCHER = "Mã Voucher không đúng. Vui lòng thử lại"
 const SEND_VOUCHER_SUCCESS = "Bạn đã tặng Voucher Thành Công";
 const CHECK_EMAIL = "Bạn không thể tặng Voucher cho chính mình";
+const USE_VOUCHER = "Chúc mừng bạn đã sử dụng voucher thành công"
 const notification = {
     CONFIRM_DELETE,
     CREATE,
@@ -42,6 +43,7 @@ const notification = {
     WRONG_VOUCHER,
     SEND_VOUCHER_SUCCESS,
     CHOOSE_STATUS,
-    CHECK_EMAIL
+    CHECK_EMAIL,
+    USE_VOUCHER
 }
 export default notification;

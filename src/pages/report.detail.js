@@ -74,9 +74,17 @@ export default class ReportDetail extends Component {
 				type: "stackedColumn100",
 				name: "Balance",
 				showInLegend: true,
-				color: "#CD7F32",
+				color: "pink",
 				dataPoints: this.props.balan
 			},
+			{
+				type: "stackedColumn100",
+				name: "NoUse",
+				showInLegend: true,
+				color: "orange",
+				dataPoints: this.props.noUseVoucher
+			},
+
 			{
 				type: "stackedColumn100",
 				name: "Use",
@@ -84,7 +92,6 @@ export default class ReportDetail extends Component {
 				color: "green",
 				dataPoints: this.props.use
 			}
-			
 			]
 		}
 		return (
@@ -97,7 +104,6 @@ export default class ReportDetail extends Component {
                 </Col>
                 <Col>
                 <CanvasJSChart options = {optionsCustomer}
-				/* onRef={ref => this.chart = ref} */
 			/>
                 </Col>
             </Row>

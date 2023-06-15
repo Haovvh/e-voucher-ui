@@ -24,10 +24,10 @@ import header from "../../services/header.service";
 export default function CustomerVoucher () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
-    const [userId, setUserId] = useState("");
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [value, setValue] = useState("");
+    
+    const [code, setCode] = useState("");
+    const [expDate, setExpDate] = useState("");
+    const [stores, setStores] = useState([])
     const [datas, setDatas] = useState([]);
     const [tempDatas, setTempDatas] = useState([]);
     const [email, setEmail] = useState("");
@@ -101,13 +101,7 @@ export default function CustomerVoucher () {
   const handleChangeEmail = (event) => (
     setEmail(event.target.value)
   )
-  const clearScreen = () => {
-    setTitle("");
-    setDescription("");
-    setValue("");
-    setUserId("");
-    
-  }
+  
   const handleKeyDown = (e) => {
     
     if (e.key === 'Enter') {
@@ -132,7 +126,7 @@ export default function CustomerVoucher () {
   const handleClickSave = () => { 
     if (email && rewardID) {
       if (email.toLocaleLowerCase() !== header.email().toLocaleLowerCase()) {
-        customerService.putRewardByCustomer(email,rewardID).then(
+        customerService.putRewardByCustomer(email,rewardID, code, expDate, stores).then(
           response => {
             console.log(response.data)
             if(response.data && response.data.success === true) {
@@ -160,12 +154,17 @@ export default function CustomerVoucher () {
   
   const handleClickClose = () => {
     setShow(false)
-    clearScreen();
+    setEmail("");
   }
   const onEditData = (record) => { 
+    console.log(record)
+    setCode(record.code);
+    setExpDate(record.expDate)
+    setStores(record.Partner.Stores)
    setRewardID(record.id);
    setShow(true)
-  };
+  }
+
     useEffect(()=>{   
       customerService.getAllRewardByCustomer().then(
         response => {
@@ -189,16 +188,18 @@ export default function CustomerVoucher () {
           </header>
           <Card>
           <Row>
-              <Col md={3}>
-              <Input
+          <Col md={{ span: 3, offset: 0 }}>   
+              <Form.Group  >
+                <Form.Control 
                 value={search}
                 onChange={handleChangeSearch}
                 onKeyDown={handleKeyDown}
                 className="header-search"
                 placeholder="Type here..."
-                prefix={<SearchOutlined />}
-              />
-              </Col> 
+                />        
+              </Form.Group>             
+              
+              </Col>
                          
             </Row>
           </Card>                 

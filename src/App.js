@@ -1,10 +1,6 @@
 
 import { Switch, Route, Redirect } from "react-router-dom";
 import Home from "./pages/Home";
-import Tables from "./pages/Tables";
-import Billing from "./pages/Billing";
-
-
 
 import PartnerPromotion from "./pages/partner/partner.promotion";
 import PartnerStore from "./pages/partner/partner.store";
@@ -12,7 +8,6 @@ import PartnerGame from "./pages/partner/partner.game";
 import PartnerVoucher from "./pages/partner/partner.voucher";
 import PartnerProfile from "./pages/partner/partner.profile";
 import PartnerReport from "./pages/partner/partner.report";
-import PartnerUseVoucher from "./pages/partner/partner.usevoucher";
 
 import AdminPromotion from "./pages/admin/admin.promotion";
 import AdminPartner from "./pages/admin/admin.partner";
@@ -60,7 +55,6 @@ function App() {
           <Route exact path="/partnervoucher" component={isPartner ? PartnerVoucher : NotFound} />
           <Route exact path="/partnerreport" component={isPartner ? PartnerReport : NotFound} />
           <Route exact path="/partnerprofile" component={isPartner ? PartnerProfile : NotFound} />
-          <Route exact path="/partnerusevoucher" component={isPartner ? PartnerUseVoucher : NotFound} />
           
           <Route exact path="/adminpromotion" component={isAdmin ? AdminPromotion : NotFound} />
           <Route exact path="/adminpartner" component={isAdmin ? AdminPartner : NotFound} />
@@ -76,8 +70,6 @@ function App() {
           
           <Route exact path="/signin" component={isUser ? Logout : NotFound} />
           
-          <Route exact path="/tables" component={Tables} />
-          <Route exact path="/billing" component={Billing} />
           <Route exact path="/*" component={Home} />
           
         </Main>

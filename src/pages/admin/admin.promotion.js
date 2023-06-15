@@ -152,15 +152,17 @@ export default function AdminPromotion () {
           
           <Card>
           <Row>
-              <Col md={6}>
-              <Input
+          <Col md={{ span: 3, offset: 0 }}>   
+              <Form.Group  >
+                <Form.Control 
                 value={search}
                 onChange={handleChangeSearch}
                 onKeyDown={handleKeyDown}
                 className="header-search"
                 placeholder="Type here..."
-                prefix={<SearchOutlined />}
-              />
+                />        
+              </Form.Group>             
+              
               </Col>
               
             </Row>

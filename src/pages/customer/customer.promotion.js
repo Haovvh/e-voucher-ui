@@ -19,13 +19,10 @@ import {
 } from "antd";
 import Form from 'react-bootstrap/Form';
 
-import { EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
-import notification from "../../utils/notification";
 import customerService from "../../services/customer.service";
 import CustomerPlayGame from "./customer.playgame";
 
 export default function CustomerPromotion () {
-    const [isLoad, setIsLoad] = useState(false);
     const [promotionID, setPromotionID] = useState("");
     const [searchLocation, setSearchLocation] = useState("");
     const [searchTitle, setSearchTitle] = useState("");
@@ -163,7 +160,7 @@ export default function CustomerPromotion () {
         }
       )    
       
-    },[isLoad])
+    },[])
     return(
         <React.Fragment>
           {(isPlayGame && promotionID !== "") ? 

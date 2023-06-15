@@ -17,7 +17,6 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import notification from "../../utils/notification";
-import AdminService from "../../services/admin.service";
 import partnerService from "../../services/partner.service";
 
 
@@ -111,16 +110,19 @@ export default function PartnerGame () {
           </header>
           <Card>
           <Row>
-              <Col md={3}>
-              <Input
+          <Col md={{ span: 3, offset: 0 }}>   
+              <Form.Group  >
+                <Form.Control 
                 value={search}
                 onChange={handleChangeSearch}
                 onKeyDown={handleKeyDown}
                 className="header-search"
                 placeholder="Type here..."
-                prefix={<SearchOutlined />}
-              />
-              </Col> 
+                />        
+              </Form.Group>             
+              
+              </Col>
+             
                        
             </Row>
           </Card>                 

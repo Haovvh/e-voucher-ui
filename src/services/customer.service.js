@@ -82,9 +82,9 @@ const postRewardByCustomer = ( promotionID, voucherID,partnerID, customerID = he
     })
 );
 
-const putRewardByCustomer = (email, rewardID  ) =>(
+const putRewardByCustomer = (email, rewardID,  code, expDate, stores, sender=header.email() ) =>(
     axios.put(`${process.env.REACT_APP_API_URL}/customer/reward`, {
-        email, rewardID
+        email, rewardID, sender, code, expDate, stores
     }, { 
         headers: header.authHeader() 
     })

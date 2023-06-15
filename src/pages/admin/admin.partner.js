@@ -314,15 +314,17 @@ export default function AdminPartner () {
           </header>
           <Card>
           <Row>
-              <Col md={3}>
-              <Input
+          <Col md={{ span: 3, offset: 0 }}>   
+              <Form.Group  >
+                <Form.Control 
                 value={search}
                 onChange={handleChangeSearch}
                 onKeyDown={handleKeyDown}
                 className="header-search"
                 placeholder="Type here..."
-                prefix={<SearchOutlined />}
-              />
+                />        
+              </Form.Group>             
+              
               </Col>
               <Col  md={{ span: 2, offset: 7 }}>
               <Button  className='btn  btn-success  ' onClick={handleClickNew}>

@@ -20,7 +20,7 @@ const getAllPromotionByPartner = (id = header.getUserId()) => (
 );
 
 const getAllPromotionByPartnerToReport = (id = header.getUserId()) => (
-    axios.get(`${process.env.REACT_APP_API_URL}/partner/promotion?id=${id}/statistic`, { 
+    axios.get(`${process.env.REACT_APP_API_URL}/partner/statistic?id=${id}`, { 
        headers: header.authHeader() 
    })
 );
