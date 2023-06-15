@@ -5,17 +5,7 @@ import {
   Col,
   Card,
   Radio,
-  Table,
-  Upload,
-  message,
-  Progress,  
-  Avatar,
-  Space,
-  Tag,  
-  Typography,
-  
-  Input,
-  Select
+  Table, 
 } from "antd";
 import Form from 'react-bootstrap/Form';
 

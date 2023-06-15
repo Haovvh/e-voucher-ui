@@ -24,7 +24,7 @@ import header from "../../services/header.service";
 export default function CustomerVoucher () {
     const [show, setShow] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
-    
+    const [partnerName, setPartnerName] = useState("")
     const [code, setCode] = useState("");
     const [expDate, setExpDate] = useState("");
     const [stores, setStores] = useState([])
@@ -126,7 +126,7 @@ export default function CustomerVoucher () {
   const handleClickSave = () => { 
     if (email && rewardID) {
       if (email.toLocaleLowerCase() !== header.email().toLocaleLowerCase()) {
-        customerService.putRewardByCustomer(email,rewardID, code, expDate, stores).then(
+        customerService.putRewardByCustomer(email,rewardID, code, expDate,partnerName, stores).then(
           response => {
             console.log(response.data)
             if(response.data && response.data.success === true) {
@@ -158,6 +158,7 @@ export default function CustomerVoucher () {
   }
   const onEditData = (record) => { 
     console.log(record)
+    setPartnerName(record.Partner.name)
     setCode(record.code);
     setExpDate(record.expDate)
     setStores(record.Partner.Stores)
