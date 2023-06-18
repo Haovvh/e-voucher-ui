@@ -211,7 +211,7 @@ export default function PartnerPromotion () {
               </Form.Group>             
               
               </Col>
-              <Col  md={{ span: 3, offset: 15 }}>
+              <Col  md={{ span: 2, offset: 7 }}>
               <Button  className='btn btn-success ' onClick={handleClickNew}>
             New
           </Button>

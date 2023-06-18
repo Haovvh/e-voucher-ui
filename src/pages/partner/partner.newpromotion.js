@@ -451,6 +451,7 @@ export default function PartnerNewPromotion(props) {
         
         <Form.Control
         readOnly={readOnly}
+        disabled={readOnly}
         as="select" 
         value={gameID}
         onChange={handleChangeGame}

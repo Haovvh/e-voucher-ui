@@ -65,16 +65,7 @@ export default function PartnerStore () {
         </p>
        ),
     },
-    {
-      title: "Status",
-      dataIndex: "isDeleted",
-      render: (text, record) => (
-        <Button onClick={()=> handleEditStatus(record)}>
-          {(record.isDeleted === true) ? "True" : "False"}
-        </Button>
-       ),
-      
-    },
+    
     {
       title: "Actions",
       key: 'action',      

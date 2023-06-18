@@ -22,7 +22,7 @@ h2{
 }
 .memoryCard{
   height: 80px;
-  width: 150px;
+  width: 100%;
   border: 1.5px solid transparent;
   transition: all .3s ease-in;
   margin: 1 auto;
